@@ -1,5 +1,17 @@
 "
 I am a class to experiment with a thread based Generator.
+
+```
+""Playground""
+SmalltalkImage current garbageCollect. 8.
+
+gen := (ThreadGenerator on: [ :gen | 1 to: 10 do: [:i | gen yield: i] ]).
+gen := ThreadGenerator on: [ :gen | gen yield: 99 ].
+gen next.
+gen hasNext.
+
+col := OrderedCollection new.[ gen hasNext ] whileTrue: [ col add: gen next ].col.
+```
 "
 Class {
 	#name : #ThreadGenerator,
