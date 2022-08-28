@@ -36,9 +36,9 @@ ThreadGenerator >> hasNext [
 
 { #category : #accessing }
 ThreadGenerator >> next [
-	finished ifTrue: [ ^ nil ].
 	genThread resume.
 	sem wait.
+	finished ifTrue: [ ^ nil ].
 	^ nextVal 
 ]
 
@@ -46,7 +46,8 @@ ThreadGenerator >> next [
 ThreadGenerator >> on: genBlock [
 	sem := Semaphore new.
 	finished := false.
-	genThread := [ genBlock value: self. finished := true ] newProcess.
+	genThread := [ genBlock value: self. finished := true. sem signal ] newProcess.
+	genThread resume.
 	
 
 ]
