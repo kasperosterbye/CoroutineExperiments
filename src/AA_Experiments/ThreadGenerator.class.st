@@ -17,11 +17,11 @@ Class {
 	#name : #ThreadGenerator,
 	#superclass : #Object,
 	#instVars : [
-		'genThread',
-		'sem',
 		'nextVal',
 		'nextReturn',
-		'finished'
+		'finished',
+		'clientSem',
+		'genSem'
 	],
 	#category : #'AA_Experiments'
 }
@@ -42,32 +42,45 @@ ThreadGenerator class >> somePrimes [
 ]
 
 { #category : #testing }
+ThreadGenerator >> atEnd [
+	^ self hasNext 
+]
+
+{ #category : #testing }
 ThreadGenerator >> hasNext [
-	^ finished not
+	|hasNext|
+	clientSem wait.
+	hasNext := finished not.
+	clientSem signal.
+	^ hasNext
 ]
 
 { #category : #accessing }
 ThreadGenerator >> next [
-	genThread resume.
-	sem wait.
-	finished ifTrue: [ ^ nil ].
-	^ nextVal 
+	"Take next value, and release generator"
+	|next|
+	clientSem wait.
+	next := nextVal.
+	genSem signal.
+	^ next 
 ]
 
 { #category : #'instance creation' }
 ThreadGenerator >> on: genBlock [
-	sem := Semaphore new.
+	clientSem := Semaphore new.
+	genSem := Semaphore new.
 	finished := false.
-	genThread := [ genBlock value: self. finished := true. sem signal ] newProcess.
-	genThread resume.
+	thisContext halt.
+	[ genBlock value: self. finished := true. clientSem signal] fork
 	
 
 ]
 
 { #category : #public }
 ThreadGenerator >> yield: aValue [
+	"Yield the value to client, and wait for consumption (next call)"
 	nextVal := aValue.
-	sem signal.
-	genThread suspend.
+	clientSem signal.
+	genSem wait.
 	
 ]
