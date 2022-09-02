@@ -14,25 +14,25 @@ col := OrderedCollection new.[ gen hasNext ] whileTrue: [ col add: gen next ].co
 ```
 "
 Class {
-	#name : #ThreadGenerator,
+	#name : #ThreadSuspendGenerator,
 	#superclass : #Object,
 	#instVars : [
 		'nextVal',
 		'nextReturn',
 		'finished',
 		'clientSem',
-		'genSem'
+		'genProcess'
 	],
 	#category : #'AA_Experiments'
 }
 
 { #category : #'instance creation' }
-ThreadGenerator class >> on: genBlock [
+ThreadSuspendGenerator class >> on: genBlock [
 	^ self new on: genBlock.
 ]
 
 { #category : #'instance creation' }
-ThreadGenerator class >> somePrimes [
+ThreadSuspendGenerator class >> somePrimes [
 	"self somePrimes" 
 	<example>
 	^ String streamContents: [ :str | 
@@ -42,12 +42,12 @@ ThreadGenerator class >> somePrimes [
 ]
 
 { #category : #testing }
-ThreadGenerator >> atEnd [
+ThreadSuspendGenerator >> atEnd [
 	^ self hasNext 
 ]
 
 { #category : #testing }
-ThreadGenerator >> hasNext [
+ThreadSuspendGenerator >> hasNext [
 	|hasNext|
 	clientSem wait.
 	hasNext := finished not.
@@ -56,31 +56,30 @@ ThreadGenerator >> hasNext [
 ]
 
 { #category : #accessing }
-ThreadGenerator >> next [
+ThreadSuspendGenerator >> next [
 	"Take next value, and release generator"
 	|next|
 	clientSem wait.
 	next := nextVal.
-	genSem signal.
+	genProcess resume.
 	^ next 
 ]
 
 { #category : #'instance creation' }
-ThreadGenerator >> on: genBlock [
+ThreadSuspendGenerator >> on: genBlock [
 	clientSem := Semaphore new.
-	genSem := Semaphore new.
+	genProcess := Semaphore new.
 	finished := false.
-	thisContext halt.
-	[ genBlock value: self. finished := true. clientSem signal] fork
-	
+	genProcess := [ genBlock value: self. finished := true. clientSem signal] newProcess.
+	genProcess resume.
 
 ]
 
 { #category : #public }
-ThreadGenerator >> yield: aValue [
+ThreadSuspendGenerator >> yield: aValue [
 	"Yield the value to client, and wait for consumption (next call)"
 	nextVal := aValue.
 	clientSem signal.
-	genSem wait.
+	genProcess suspend.
 	
 ]

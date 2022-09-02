@@ -10,6 +10,7 @@ GeneratorSort >> merge: gen1 and: gen2 [
 	gen1 atEnd ifTrue: [ ^ gen2 ].
 	gen2 atEnd ifTrue: [ ^ gen2 ].
 	^ Generator on: [ :gen |
+		"as long both are not empty"
 		[ gen1 atEnd or: [ gen2 atEnd] ]
 			whileFalse: [ 
 				gen1 peek < gen2 peek
