@@ -1,5 +1,9 @@
+"
+I implement a simple generator.
+The generator is run in a seperate process, and it synchronize with the client thread using two semaphores, one for waiting the client, and one for waiting the generator
+"
 Class {
-	#name : #ThreadSemGenerator,
+	#name : #ProcessSemGenerator,
 	#superclass : #Object,
 	#instVars : [
 		'nextVal',
@@ -12,12 +16,12 @@ Class {
 }
 
 { #category : #'instance creation' }
-ThreadSemGenerator class >> on: genBlock [
+ProcessSemGenerator class >> on: genBlock [
 	^ self new on: genBlock.
 ]
 
 { #category : #'instance creation' }
-ThreadSemGenerator class >> somePrimes [
+ProcessSemGenerator class >> somePrimes [
 	"self somePrimes" 
 	<example>
 	^ String streamContents: [ :str | 
@@ -27,12 +31,12 @@ ThreadSemGenerator class >> somePrimes [
 ]
 
 { #category : #testing }
-ThreadSemGenerator >> atEnd [
+ProcessSemGenerator >> atEnd [
 	^ self hasNext 
 ]
 
 { #category : #testing }
-ThreadSemGenerator >> hasNext [
+ProcessSemGenerator >> hasNext [
 	|hasNext|
 	clientSem wait.
 	hasNext := finished not.
@@ -41,7 +45,7 @@ ThreadSemGenerator >> hasNext [
 ]
 
 { #category : #accessing }
-ThreadSemGenerator >> next [
+ProcessSemGenerator >> next [
 	"Take next value, and release generator"
 	|next|
 	clientSem wait.
@@ -51,7 +55,7 @@ ThreadSemGenerator >> next [
 ]
 
 { #category : #'instance creation' }
-ThreadSemGenerator >> on: genBlock [
+ProcessSemGenerator >> on: genBlock [
 	clientSem := Semaphore new.
 	genSem := Semaphore new.
 	finished := false.
@@ -61,7 +65,7 @@ ThreadSemGenerator >> on: genBlock [
 ]
 
 { #category : #public }
-ThreadSemGenerator >> yield: aValue [
+ProcessSemGenerator >> yield: aValue [
 	"Yield the value to client, and wait for consumption (next call)"
 	nextVal := aValue.
 	clientSem signal.

@@ -1,5 +1,7 @@
 "
-I am a class to experiment with a thread based Generator.
+I implement a simple generator.
+The generator is run in a seperate process. The generator uses suspend/resume to to control its execution, whereas the client is controled by a semaphore.
+
 
 ```
 ""Playground""
@@ -14,7 +16,7 @@ col := OrderedCollection new.[ gen hasNext ] whileTrue: [ col add: gen next ].co
 ```
 "
 Class {
-	#name : #ThreadSuspendGenerator,
+	#name : #ProcessSuspendGenerator,
 	#superclass : #Object,
 	#instVars : [
 		'nextVal',
@@ -27,12 +29,12 @@ Class {
 }
 
 { #category : #'instance creation' }
-ThreadSuspendGenerator class >> on: genBlock [
+ProcessSuspendGenerator class >> on: genBlock [
 	^ self new on: genBlock.
 ]
 
 { #category : #'instance creation' }
-ThreadSuspendGenerator class >> somePrimes [
+ProcessSuspendGenerator class >> somePrimes [
 	"self somePrimes" 
 	<example>
 	^ String streamContents: [ :str | 
@@ -42,12 +44,12 @@ ThreadSuspendGenerator class >> somePrimes [
 ]
 
 { #category : #testing }
-ThreadSuspendGenerator >> atEnd [
+ProcessSuspendGenerator >> atEnd [
 	^ self hasNext 
 ]
 
 { #category : #testing }
-ThreadSuspendGenerator >> hasNext [
+ProcessSuspendGenerator >> hasNext [
 	|hasNext|
 	clientSem wait.
 	hasNext := finished not.
@@ -56,7 +58,7 @@ ThreadSuspendGenerator >> hasNext [
 ]
 
 { #category : #accessing }
-ThreadSuspendGenerator >> next [
+ProcessSuspendGenerator >> next [
 	"Take next value, and release generator"
 	|next|
 	clientSem wait.
@@ -66,7 +68,7 @@ ThreadSuspendGenerator >> next [
 ]
 
 { #category : #'instance creation' }
-ThreadSuspendGenerator >> on: genBlock [
+ProcessSuspendGenerator >> on: genBlock [
 	clientSem := Semaphore new.
 	genProcess := Semaphore new.
 	finished := false.
@@ -76,7 +78,7 @@ ThreadSuspendGenerator >> on: genBlock [
 ]
 
 { #category : #public }
-ThreadSuspendGenerator >> yield: aValue [
+ProcessSuspendGenerator >> yield: aValue [
 	"Yield the value to client, and wait for consumption (next call)"
 	nextVal := aValue.
 	clientSem signal.
