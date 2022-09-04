@@ -139,6 +139,7 @@ Simulation >> readyToContinue [
 
 { #category : #reporting }
 Simulation >> report: label [
+	self error: 'Who called me - am I needed'.
 	Transcript show: label.
 	Transcript tab.
 	Transcript show: 'pc: ', processCount printString.
