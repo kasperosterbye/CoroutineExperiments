@@ -2,10 +2,24 @@ Class {
 	#name : #AAA,
 	#superclass : #Object,
 	#instVars : [
-		'tmp'
+		'tmp',
+		'first'
 	],
 	#category : #'AA_Experiments'
 }
+
+{ #category : #'as yet unclassified' }
+AAA >> aaa [
+	| b |
+	Transcript log: 'Pre aaa'.
+	b := [ |x| x := 99. 
+		Transcript log: 'block 1'.
+		x < 100 ifTrue: [ thisContext sender resume: x]. 
+		Transcript log: 'block 2'.
+		88 ].
+	Transcript log: 'Post aaa'.
+	^ b
+]
 
 { #category : #'accessing - token' }
 AAA >> bar [
@@ -25,12 +39,62 @@ AAA >> bar: string [
 	^ tc
 ]
 
+{ #category : #'as yet unclassified' }
+AAA >> baselineMethodCall [
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> check7Return [
+	^ self return7byContext
+]
+
 { #category : #options }
 AAA >> foo [
 	"Repeated evaluation of the returned block illustrates that the foo instance activation is kept alive"
 	| i |
 	i := 100.
 	^ [ i := i + 1. Transcript log: i asString ]
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> level1 [
+	Transcript log: 'Level 1 ->'.
+	self level2.
+	Transcript log: 'Level 1 <-'.
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> level2 [
+	Transcript log: 'Level 2 ->'.
+	self level3.
+	Transcript log: 'Level 2 <-'.
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> level3 [
+	Transcript log: 'Level 3 ->'.
+	self level4.
+	Transcript log: 'Level 3 <-'.
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> level4 [
+	Transcript log: 'Level 4 ->'.
+	tmp resume: 99.
+	Transcript log: 'Level 4 <-'.
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> levels [
+	| x pc|
+	Transcript log: 'Levels ->'.
+	tmp := thisContext.
+	pc := tmp pc.
+	x := self level1.
+	Transcript log: 'Levels <- ', x printString.
+	first ifNotNil: [ ^ self ].
+	first := #STOP.
+	thisContext pc: pc.
 ]
 
 { #category : #'accessing - token' }
@@ -46,4 +110,24 @@ AAA >> resumeAContext: ctx [
 	Transcript log: '2) Pre resume'.
 	ctx resume.
 	Transcript log: '2) Post resume'
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> return7byContext [
+	thisContext return: 7.
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> return7normally [
+	^7
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> withThisContext [
+	^thisContext
+]
+
+{ #category : #'as yet unclassified' }
+AAA >> withThisContextSender [
+	^thisContext sender
 ]
