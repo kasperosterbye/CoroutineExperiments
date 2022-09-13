@@ -1,5 +1,5 @@
 Class {
-	#name : #AAA,
+	#name : #'AAA_ContextPerformanceTests',
 	#superclass : #Object,
 	#instVars : [
 		'tmp',
@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-AAA >> aaa [
+AAA_ContextPerformanceTests >> aaa [
 	| b |
 	Transcript log: 'Pre aaa'.
 	b := [ |x| x := 99. 
@@ -22,7 +22,7 @@ AAA >> aaa [
 ]
 
 { #category : #'accessing - token' }
-AAA >> bar [
+AAA_ContextPerformanceTests >> bar [
 	"this code throws a cannotReturn: error. One cannot resume a method call which has already
 	been returned (which is reasonable as it would break stack dicepline"
 	tmp ifNil: [ tmp := self bar: 'Bar: ' ].
@@ -30,7 +30,7 @@ AAA >> bar [
 ]
 
 { #category : #'accessing - token' }
-AAA >> bar: string [
+AAA_ContextPerformanceTests >> bar: string [
 	| tc i|
 	i := 1000.
 	tc := thisContext copy.
@@ -40,16 +40,16 @@ AAA >> bar: string [
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> baselineMethodCall [
+AAA_ContextPerformanceTests >> baselineMethodCall [
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> check7Return [
+AAA_ContextPerformanceTests >> check7Return [
 	^ self return7byContext
 ]
 
 { #category : #options }
-AAA >> foo [
+AAA_ContextPerformanceTests >> foo [
 	"Repeated evaluation of the returned block illustrates that the foo instance activation is kept alive"
 	| i |
 	i := 100.
@@ -57,35 +57,42 @@ AAA >> foo [
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> level1 [
+AAA_ContextPerformanceTests >> generatorCycles: n [
+	| co |
+	co := Generator on: [ :cr | n timesRepeat: [ cr yield: 99 ] ].
+	n timesRepeat: [ co next ].
+]
+
+{ #category : #'as yet unclassified' }
+AAA_ContextPerformanceTests >> level1 [
 	Transcript log: 'Level 1 ->'.
 	self level2.
 	Transcript log: 'Level 1 <-'.
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> level2 [
+AAA_ContextPerformanceTests >> level2 [
 	Transcript log: 'Level 2 ->'.
 	self level3.
 	Transcript log: 'Level 2 <-'.
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> level3 [
+AAA_ContextPerformanceTests >> level3 [
 	Transcript log: 'Level 3 ->'.
 	self level4.
 	Transcript log: 'Level 3 <-'.
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> level4 [
+AAA_ContextPerformanceTests >> level4 [
 	Transcript log: 'Level 4 ->'.
 	tmp resume: 99.
 	Transcript log: 'Level 4 <-'.
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> levels [
+AAA_ContextPerformanceTests >> levels [
 	| x pc|
 	Transcript log: 'Levels ->'.
 	tmp := thisContext.
@@ -97,8 +104,13 @@ AAA >> levels [
 	thisContext pc: pc.
 ]
 
+{ #category : #'as yet unclassified' }
+AAA_ContextPerformanceTests >> rawStream: n [
+	(1 to: n) readStreamDo: [ :s | s next ]
+]
+
 { #category : #'accessing - token' }
-AAA >> resumeAContext [
+AAA_ContextPerformanceTests >> resumeAContext [
 	"This shows that one can resule a context as long as it is still active"
 	Transcript log: '1) Pre resume'.
 	self resumeAContext: thisContext.
@@ -106,28 +118,35 @@ AAA >> resumeAContext [
 ]
 
 { #category : #'accessing - token' }
-AAA >> resumeAContext: ctx [
+AAA_ContextPerformanceTests >> resumeAContext: ctx [
 	Transcript log: '2) Pre resume'.
 	ctx resume.
 	Transcript log: '2) Post resume'
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> return7byContext [
+AAA_ContextPerformanceTests >> return7byContext [
 	thisContext return: 7.
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> return7normally [
+AAA_ContextPerformanceTests >> return7normally [
 	^7
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> withThisContext [
+AAA_ContextPerformanceTests >> suspendAttachCycles: n [
+	| co |
+	co := AAA_Coroutine new on: [ :cr | n timesRepeat: [ cr suspend ] ].
+	n timesRepeat: [ co attach ].
+]
+
+{ #category : #'as yet unclassified' }
+AAA_ContextPerformanceTests >> withThisContext [
 	^thisContext
 ]
 
 { #category : #'as yet unclassified' }
-AAA >> withThisContextSender [
+AAA_ContextPerformanceTests >> withThisContextSender [
 	^thisContext sender
 ]
