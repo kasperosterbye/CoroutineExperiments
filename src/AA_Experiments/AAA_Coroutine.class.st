@@ -18,7 +18,8 @@ Class {
 	#instVars : [
 		'suspensionPoint',
 		'terminated',
-		'transfer'
+		'transfer',
+		'unwindTo'
 	],
 	#category : #'AA_Experiments'
 }
@@ -50,12 +51,16 @@ AAA_Coroutine >> isTerminated [
 
 { #category : #'instance creation' }
 AAA_Coroutine >> on: block [
-	terminated := false.
 	suspensionPoint := thisContext sender.
-	self suspend: self.
-	block value: self.
-	terminated := true.
-	self suspend
+	[ 	terminated := false.
+		unwindTo := thisContext.
+		self suspend: self.
+		[block value: self] 
+		on: Error
+		do: [:err | transfer := #CoroutineSignal->err]] 
+	ensure:[
+		terminated := true.
+		self suspend:transfer]
 	
 ]
 
@@ -69,6 +74,19 @@ AAA_Coroutine >> suspend: returnValue [
 	transfer := returnValue.
 	"resume caller of attach, and store my progress in suspensionPoint"
 	suspensionPoint := thisContext swapSender: suspensionPoint.
+	terminated ifTrue: [
+		(transfer isAssociation and: [ transfer key = #CoroutineSignal ])
+			ifTrue: [ transfer value signal ].
+		thisContext unwindTo: unwindTo.
+		^ nil  ].
 	"I have been reattached, return value set by attach:"
 	^ transfer 
+]
+
+{ #category : #'debugging actions' }
+AAA_Coroutine >> terminate [
+	terminated ifFalse: [
+		suspensionPoint unwindTo: unwindTo].
+	terminated ifFalse: [ self attach ].
+	
 ]
