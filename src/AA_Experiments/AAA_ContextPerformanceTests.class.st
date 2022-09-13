@@ -87,12 +87,21 @@ AAA_ContextPerformanceTests >> level3 [
 { #category : #'as yet unclassified' }
 AAA_ContextPerformanceTests >> level4 [
 	Transcript log: 'Level 4 ->'.
+	1halt.
 	tmp resume: 99.
 	Transcript log: 'Level 4 <-'.
 ]
 
 { #category : #'as yet unclassified' }
 AAA_ContextPerformanceTests >> levels [
+	| x |
+	Transcript log: 'Levels ->'.
+	[tmp := thisContext. x := self level1] value.
+	Transcript log: 'Levels <- ', x printString.
+]
+
+{ #category : #'as yet unclassified' }
+AAA_ContextPerformanceTests >> levelsWithGoto [
 	| x pc|
 	Transcript log: 'Levels ->'.
 	tmp := thisContext.
