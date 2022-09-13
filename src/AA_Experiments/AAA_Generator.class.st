@@ -17,6 +17,16 @@ AAA_Generator class >> on: block [
 	^ self basicNew on: block
 ]
 
+{ #category : #testing }
+AAA_Generator >> atEnd [
+	^ coroutine isTerminated 
+]
+
+{ #category : #'open/close' }
+AAA_Generator >> close [
+	coroutine terminate.
+]
+
 { #category : #accessing }
 AAA_Generator >> contents [
 	"Answer the contents of this generator. Do not call this method on infinite generators."
@@ -26,6 +36,15 @@ AAA_Generator >> contents [
 	[ self atEnd ]
 		whileFalse: [ stream nextPut: self next ].
 	^ stream contents
+]
+
+{ #category : #accessing }
+AAA_Generator >> next [
+	| currentNext |
+	self atEnd ifTrue: [ ^ nil ].
+	currentNext := next.
+	next := coroutine attach.
+	^ currentNext 
 ]
 
 { #category : #accessing }
