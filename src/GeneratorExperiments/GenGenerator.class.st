@@ -1,26 +1,34 @@
+"
+I implement a generator similar to `Generator`, but as a subclass of Coroutine.
+"
 Class {
-	#name : #'AAA_SimpleGenerator',
+	#name : #GenGenerator,
 	#superclass : #Stream,
 	#instVars : [
 		'coroutine',
 		'next',
 		'resetBlock'
 	],
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #'instance creation' }
-AAA_SimpleGenerator class >> on: block [
+GenGenerator class >> on: block [
 	^ self basicNew on: block
 ]
 
 { #category : #testing }
-AAA_SimpleGenerator >> atEnd [
+GenGenerator >> atEnd [
 	^ coroutine isTerminated 
 ]
 
+{ #category : #'open/close' }
+GenGenerator >> close [
+	coroutine terminate.
+]
+
 { #category : #accessing }
-AAA_SimpleGenerator >> contents [
+GenGenerator >> contents [
 	"Answer the contents of this generator. Do not call this method on infinite generators."
 
 	| stream |
@@ -31,7 +39,7 @@ AAA_SimpleGenerator >> contents [
 ]
 
 { #category : #accessing }
-AAA_SimpleGenerator >> next [
+GenGenerator >> next [
 	| currentNext |
 	self atEnd ifTrue: [ ^ nil ].
 	currentNext := next.
@@ -40,24 +48,30 @@ AAA_SimpleGenerator >> next [
 ]
 
 { #category : #accessing }
-AAA_SimpleGenerator >> nextPut: aValue [
+GenGenerator >> nextPut: aValue [
 	^ self yield: aValue
 ]
 
 { #category : #accessing }
-AAA_SimpleGenerator >> on: aBlock [
+GenGenerator >> on: aBlock [
 	resetBlock := aBlock.
-	coroutine := AAA_SimpleCoroutine on: [:co | aBlock value: self ].
+	coroutine := GenCoroutine on: [:co | aBlock value: self ].
 	next := coroutine attach.
 ]
 
 { #category : #public }
-AAA_SimpleGenerator >> peek [
+GenGenerator >> peek [
 	^ next
 ]
 
+{ #category : #initialization }
+GenGenerator >> reset [
+	coroutine terminate.
+	self on: resetBlock
+]
+
 { #category : #public }
-AAA_SimpleGenerator >> yield: aValue [
+GenGenerator >> yield: aValue [
 	| currentNext |
 	currentNext := next.
 	next := coroutine suspend: aValue.

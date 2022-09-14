@@ -13,7 +13,7 @@ The `suspend:` argument is returned as the result of the attach call. The argume
 - transfer - keeps the value passed back and forth between `attach:` and `suspend:`
 "
 Class {
-	#name : #'AAA_Coroutine',
+	#name : #GenCoroutine,
 	#superclass : #Object,
 	#instVars : [
 		'suspensionPoint',
@@ -21,22 +21,22 @@ Class {
 		'transfer',
 		'unwindTo'
 	],
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #'instance creation' }
-AAA_Coroutine class >> on: block [
+GenCoroutine class >> on: block [
 	^ self new on: block
 ]
 
 { #category : #coroutine }
-AAA_Coroutine >> attach [
+GenCoroutine >> attach [
 	^ self attach: nil.
 ]
 
 { #category : #coroutine }
-AAA_Coroutine >> attach: returnValue [
-	terminated ifTrue: [ AAA_CoroutineTerminated signal ].
+GenCoroutine >> attach: returnValue [
+	terminated ifTrue: [ GenCoroutineTerminated signal ].
 	transfer := returnValue.
 	"attach the coroutine, and store caller in suspensionPoint"
 	suspensionPoint := thisContext swapSender: suspensionPoint.
@@ -45,12 +45,12 @@ AAA_Coroutine >> attach: returnValue [
 ]
 
 { #category : #coroutine }
-AAA_Coroutine >> isTerminated [
+GenCoroutine >> isTerminated [
 	^ terminated
 ]
 
 { #category : #'instance creation' }
-AAA_Coroutine >> on: block [
+GenCoroutine >> on: block [
 	suspensionPoint := thisContext sender.
 	[ 	terminated := false.
 		unwindTo := thisContext.
@@ -65,12 +65,12 @@ AAA_Coroutine >> on: block [
 ]
 
 { #category : #coroutine }
-AAA_Coroutine >> suspend [
+GenCoroutine >> suspend [
 	^ self suspend: nil
 ]
 
 { #category : #coroutine }
-AAA_Coroutine >> suspend: returnValue [
+GenCoroutine >> suspend: returnValue [
 	transfer := returnValue.
 	"resume caller of attach, and store my progress in suspensionPoint"
 	suspensionPoint := thisContext swapSender: suspensionPoint.
@@ -84,7 +84,7 @@ AAA_Coroutine >> suspend: returnValue [
 ]
 
 { #category : #'debugging actions' }
-AAA_Coroutine >> terminate [
+GenCoroutine >> terminate [
 	terminated ifFalse: [
 		suspensionPoint unwindTo: unwindTo].
 	terminated ifFalse: [ self attach ].

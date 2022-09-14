@@ -1,5 +1,8 @@
+"
+I am a simpler implementation of `GenCoroutine` without error propagation and client side termination.
+"
 Class {
-	#name : #'AAA_SimpleCoroutine',
+	#name : #GenSimpleCoroutine,
 	#superclass : #Object,
 	#instVars : [
 		'suspensionPoint',
@@ -7,22 +10,22 @@ Class {
 		'transfer',
 		'unwindTo'
 	],
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #'instance creation' }
-AAA_SimpleCoroutine class >> on: block [
+GenSimpleCoroutine class >> on: block [
 	^ self new on: block
 ]
 
 { #category : #coroutine }
-AAA_SimpleCoroutine >> attach [
+GenSimpleCoroutine >> attach [
 	^ self attach: nil.
 ]
 
 { #category : #coroutine }
-AAA_SimpleCoroutine >> attach: returnValue [
-	terminated ifTrue: [ AAA_CoroutineTerminated signal ].
+GenSimpleCoroutine >> attach: returnValue [
+	terminated ifTrue: [ GenCoroutineTerminated signal ].
 	transfer := returnValue.
 	"attach the coroutine, and store caller in suspensionPoint"
 	suspensionPoint := thisContext swapSender: suspensionPoint.
@@ -31,12 +34,12 @@ AAA_SimpleCoroutine >> attach: returnValue [
 ]
 
 { #category : #coroutine }
-AAA_SimpleCoroutine >> isTerminated [
+GenSimpleCoroutine >> isTerminated [
 	^ terminated
 ]
 
 { #category : #'instance creation' }
-AAA_SimpleCoroutine >> on: block [
+GenSimpleCoroutine >> on: block [
 	suspensionPoint := thisContext sender.
 	terminated := false.
 	self suspend: self.
@@ -46,12 +49,12 @@ AAA_SimpleCoroutine >> on: block [
 ]
 
 { #category : #coroutine }
-AAA_SimpleCoroutine >> suspend [
+GenSimpleCoroutine >> suspend [
 	^ self suspend: nil
 ]
 
 { #category : #coroutine }
-AAA_SimpleCoroutine >> suspend: returnValue [
+GenSimpleCoroutine >> suspend: returnValue [
 	transfer := returnValue.
 	"resume caller of attach, and store my progress in suspensionPoint"
 	suspensionPoint := thisContext swapSender: suspensionPoint.

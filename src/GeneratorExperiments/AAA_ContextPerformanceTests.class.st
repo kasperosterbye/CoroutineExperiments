@@ -5,7 +5,7 @@ Class {
 		'tmp',
 		'first'
 	],
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Performance'
 }
 
 { #category : #'as yet unclassified' }
@@ -154,7 +154,7 @@ AAA_ContextPerformanceTests >> return7normally [
 { #category : #'as yet unclassified' }
 AAA_ContextPerformanceTests >> suspendAttachCycles: n [
 	| co |
-	co := AAA_Coroutine new on: [ :cr | n timesRepeat: [ cr suspend ] ].
+	co := GenCoroutine new on: [ :cr | n timesRepeat: [ cr suspend ] ].
 	n timesRepeat: [ co attach ].
 ]
 

@@ -11,7 +11,7 @@ Class {
 		'clientSem',
 		'genSem'
 	],
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #'instance creation' }

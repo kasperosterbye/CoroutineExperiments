@@ -2,23 +2,23 @@
 I measure execution times
 "
 Class {
-	#name : #'AAA_ExperimentTimer',
+	#name : #GenExperimentTimer,
 	#superclass : #Object,
 	#instVars : [
 		'blockReps',
 		'measureReps'
 	],
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Performance'
 }
 
 { #category : #accessing }
-AAA_ExperimentTimer >> blockReps: anObject [
+GenExperimentTimer >> blockReps: anObject [
 
 	blockReps := anObject
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ExperimentTimer >> forkingMinFor: block [ 
+GenExperimentTimer >> forkingMinFor: block [ 
 	"return minimal execution time (least noice) in nanoseconds for blockReps executions of block.
 	Fork actual experiment at high process priority to reduce noice"
 	| experimenter awaitDone minTime| 
@@ -37,7 +37,7 @@ AAA_ExperimentTimer >> forkingMinFor: block [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ExperimentTimer >> forkingNanoMinFor: block [ 
+GenExperimentTimer >> forkingNanoMinFor: block [ 
 	"return minimal execution time (least noice) in nanoseconds for blockReps executions of block.
 	Fork actual experiment at high process priority to reduce noice"
 	| experimenter awaitDone minTime| 
@@ -56,12 +56,12 @@ AAA_ExperimentTimer >> forkingNanoMinFor: block [
 ]
 
 { #category : #accessing }
-AAA_ExperimentTimer >> measureReps: anObject [
+GenExperimentTimer >> measureReps: anObject [
 	measureReps := anObject
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ExperimentTimer >> minFor: block [ 
+GenExperimentTimer >> minFor: block [ 
 	"return minimal execution time (least noice) in microseconds for blockReps executions of block"
 	| minTime| 
 	minTime :=  (Time microsecondsToRun: [ blockReps timesRepeat: block ]).
@@ -71,7 +71,7 @@ AAA_ExperimentTimer >> minFor: block [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ExperimentTimer >> nanoMinFor: block [ 
+GenExperimentTimer >> nanoMinFor: block [ 
 	"return minimal execution time (least noice) in microseconds for blockReps executions of block"
 	| minTime| 
 	minTime :=  self nanoToRun: [ blockReps timesRepeat: block ].
@@ -81,14 +81,14 @@ AAA_ExperimentTimer >> nanoMinFor: block [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ExperimentTimer >> nanoSeconds [ 
+GenExperimentTimer >> nanoSeconds [ 
 	"Stolen from malltalk highResClock"
 	<primitive: 'primitiveHighResClock'>
 	^0
 ]
 
 { #category : #performance }
-AAA_ExperimentTimer >> nanoToRun: aBlock [
+GenExperimentTimer >> nanoToRun: aBlock [
 	| start |
 	start := self nanoSeconds.
 	aBlock value.

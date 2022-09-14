@@ -2,15 +2,15 @@
 An AAA_CoroutineTest is a test class for testing the behavior of AAA_Coroutine
 "
 Class {
-	#name : #'AAA_CoroutineTest',
+	#name : #GenCoroutineTest,
 	#superclass : #TestCase,
-	#category : #'AA_Experiments-Tests'
+	#category : #'GeneratorExperiments-Tests'
 }
 
 { #category : #testing }
-AAA_CoroutineTest >> testAttachValueReturn [
+GenCoroutineTest >> testAttachValueReturn [
 	| co foo |
-	co := AAA_Coroutine on: [ :cor | foo := cor suspend. foo := cor suspend].
+	co := GenCoroutine on: [ :cor | foo := cor suspend. foo := cor suspend].
 	co attach. "run to first suspend"
 	co attach: 17. "perform assignment, and run til next suspend"
 	self assert: foo equals: 17.
@@ -20,9 +20,9 @@ AAA_CoroutineTest >> testAttachValueReturn [
 ]
 
 { #category : #testing }
-AAA_CoroutineTest >> testCanAttach [
+GenCoroutineTest >> testCanAttach [
 	| co foo |
-	co := AAA_Coroutine on: [ :cor | foo := 17 ].
+	co := GenCoroutine on: [ :cor | foo := 17 ].
 	self assert: foo equals: nil.
 	co attach.
 	self assert: foo equals: 17.
@@ -30,9 +30,9 @@ AAA_CoroutineTest >> testCanAttach [
 ]
 
 { #category : #testing }
-AAA_CoroutineTest >> testCanAttachMultipleTimes [
+GenCoroutineTest >> testCanAttachMultipleTimes [
 	| co foo |
-	co := AAA_Coroutine on: [ :cor | foo := 17. cor suspend. foo := 19. cor suspend. foo := 21 ].
+	co := GenCoroutine on: [ :cor | foo := 17. cor suspend. foo := 19. cor suspend. foo := 21 ].
 	self assert: foo equals: nil.
 	self deny: co isTerminated. 
 	co attach.
@@ -47,17 +47,17 @@ AAA_CoroutineTest >> testCanAttachMultipleTimes [
 ]
 
 { #category : #testing }
-AAA_CoroutineTest >> testCanInitialize [
+GenCoroutineTest >> testCanInitialize [
 	| co |
-	co := AAA_Coroutine on: [ :cor |  ].
-	self assert: co class equals: AAA_Coroutine.
+	co := GenCoroutine on: [ :cor |  ].
+	self assert: co class equals: GenCoroutine.
 	self deny: co isTerminated 
 ]
 
 { #category : #testing }
-AAA_CoroutineTest >> testSuspendValueReturn [
+GenCoroutineTest >> testSuspendValueReturn [
 	| co foo |
-	co := AAA_Coroutine on: [ :cor | cor suspend: 17. cor suspend: 19 ].
+	co := GenCoroutine on: [ :cor | cor suspend: 17. cor suspend: 19 ].
 	foo := co attach.
 	self assert: foo equals: 17.
 	foo := co attach.
@@ -68,21 +68,21 @@ AAA_CoroutineTest >> testSuspendValueReturn [
 ]
 
 { #category : #tests }
-AAA_CoroutineTest >> testTerminate [
+GenCoroutineTest >> testTerminate [
 	| co |
-	co := AAA_Coroutine on: [ :cor | cor suspend ].
+	co := GenCoroutine on: [ :cor | cor suspend ].
 	co terminate.
 	self assert: co isTerminated.
 	self 
 		should: [ co attach ]
-		raise: AAA_CoroutineTerminated
+		raise: GenCoroutineTerminated
 ]
 
 { #category : #tests }
-AAA_CoroutineTest >> testTerminateWithUnwind [
+GenCoroutineTest >> testTerminateWithUnwind [
 	| co foo|
 	foo := 17.
-	co := AAA_Coroutine on: [ :cor | [cor suspend] ensure: [ foo := 19 ] ].
+	co := GenCoroutine on: [ :cor | [cor suspend] ensure: [ foo := 19 ] ].
 	co attach.
 	co terminate.
 	self assert: co isTerminated.
@@ -90,22 +90,22 @@ AAA_CoroutineTest >> testTerminateWithUnwind [
 ]
 
 { #category : #testing }
-AAA_CoroutineTest >> testTerminationError [
+GenCoroutineTest >> testTerminationError [
 	| co |
-	co := AAA_Coroutine on: [ :cor | ].
+	co := GenCoroutine on: [ :cor | ].
 	"Test that empty coroutine can be attached"
 	co attach.
 	"Test that attaching a terminated coroutine gives error"
 	self assert: co isTerminated.
 	self 
 		should: [ co attach ]
-	 	raise:  AAA_CoroutineTerminated 
+	 	raise:  GenCoroutineTerminated 
 ]
 
 { #category : #testing }
-AAA_CoroutineTest >> testTerminationOnError [
+GenCoroutineTest >> testTerminationOnError [
 	| co |
-	co := AAA_Coroutine on: [ :cor | cor error: 'Uuups' ].
+	co := GenCoroutine on: [ :cor | cor error: 'Uuups' ].
 	"Test that empty coroutine can be attached"
 	self 
 		should: [co attach]

@@ -1,14 +1,14 @@
 Class {
-	#name : #'AAA_GeneratorPerformanceTests',
+	#name : #GenPerformanceTests,
 	#superclass : #Object,
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #'as yet unclassified' }
-AAA_GeneratorPerformanceTests >> performMeasurementNumbers [
+GenPerformanceTests >> performMeasurementNumbers [
 	| candidates timer |
-	candidates := { AAA_Generator. AAA_SimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
-	timer := AAA_ExperimentTimer new
+	candidates := { GenGenerator. GenSimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
+	timer := GenExperimentTimer new
 		blockReps: 100;
 		measureReps: 1000.
 	^ candidates collect: [ :generator |
@@ -20,10 +20,10 @@ AAA_GeneratorPerformanceTests >> performMeasurementNumbers [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_GeneratorPerformanceTests >> performMeasurementPrimes [
+GenPerformanceTests >> performMeasurementPrimes [
 	| candidates timer |
-	candidates := { AAA_Generator. AAA_SimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
-	timer := AAA_ExperimentTimer new
+	candidates := { GenGenerator. GenSimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
+	timer := GenExperimentTimer new
 		blockReps: 1;
 		measureReps: 500.
 	^ candidates collect: [ :generator |
@@ -34,13 +34,13 @@ AAA_GeneratorPerformanceTests >> performMeasurementPrimes [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_GeneratorPerformanceTests >> yieldNumbers: generatorClass [
+GenPerformanceTests >> yieldNumbers: generatorClass [
 	^ generatorClass on: [ :gen | 
 		(1 to: 10) do: [ :i | gen yield: i ] ].
 ]
 
 { #category : #'as yet unclassified' }
-AAA_GeneratorPerformanceTests >> yieldPrimes: generatorClass [
+GenPerformanceTests >> yieldPrimes: generatorClass [
 	^ generatorClass on: [ :gen | 
 		(1000000 to: 1100000) do: [ :i | i isPrime ifTrue: [ gen yield: i ] ] ].
 ]
