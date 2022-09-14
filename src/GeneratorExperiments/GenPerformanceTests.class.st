@@ -1,7 +1,10 @@
+"
+I perform a number of different performance tests on the five generator implementations
+"
 Class {
 	#name : #GenPerformanceTests,
 	#superclass : #Object,
-	#category : #'GeneratorExperiments-Generators'
+	#category : #'GeneratorExperiments-Performance'
 }
 
 { #category : #'as yet unclassified' }

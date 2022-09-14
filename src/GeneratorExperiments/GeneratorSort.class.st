@@ -1,3 +1,6 @@
+"
+I am an implementation of merge sort, where the merge is done using generators
+"
 Class {
 	#name : #GeneratorSort,
 	#superclass : #Object,

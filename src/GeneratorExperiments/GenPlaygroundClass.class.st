@@ -1,5 +1,8 @@
+"
+I am a playground class
+"
 Class {
-	#name : #'AAA_ContextPerformanceTests',
+	#name : #GenPlaygroundClass,
 	#superclass : #Object,
 	#instVars : [
 		'tmp',
@@ -9,7 +12,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> aaa [
+GenPlaygroundClass >> aaa [
 	| b |
 	Transcript log: 'Pre aaa'.
 	b := [ |x| x := 99. 
@@ -22,7 +25,7 @@ AAA_ContextPerformanceTests >> aaa [
 ]
 
 { #category : #'accessing - token' }
-AAA_ContextPerformanceTests >> bar [
+GenPlaygroundClass >> bar [
 	"this code throws a cannotReturn: error. One cannot resume a method call which has already
 	been returned (which is reasonable as it would break stack dicepline"
 	tmp ifNil: [ tmp := self bar: 'Bar: ' ].
@@ -30,7 +33,7 @@ AAA_ContextPerformanceTests >> bar [
 ]
 
 { #category : #'accessing - token' }
-AAA_ContextPerformanceTests >> bar: string [
+GenPlaygroundClass >> bar: string [
 	| tc i|
 	i := 1000.
 	tc := thisContext copy.
@@ -40,16 +43,16 @@ AAA_ContextPerformanceTests >> bar: string [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> baselineMethodCall [
+GenPlaygroundClass >> baselineMethodCall [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> check7Return [
+GenPlaygroundClass >> check7Return [
 	^ self return7byContext
 ]
 
 { #category : #options }
-AAA_ContextPerformanceTests >> foo [
+GenPlaygroundClass >> foo [
 	"Repeated evaluation of the returned block illustrates that the foo instance activation is kept alive"
 	| i |
 	i := 100.
@@ -57,14 +60,14 @@ AAA_ContextPerformanceTests >> foo [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> generatorCycles: n [
+GenPlaygroundClass >> generatorCycles: n [
 	| co |
 	co := Generator on: [ :cr | n timesRepeat: [ cr yield: 99 ] ].
 	n timesRepeat: [ co next ].
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> hiresRes [
+GenPlaygroundClass >> hiresRes [
 	| x y |
 	x := Smalltalk highResClock.
 	y := Smalltalk highResClock.
@@ -72,28 +75,28 @@ AAA_ContextPerformanceTests >> hiresRes [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> level1 [
+GenPlaygroundClass >> level1 [
 	Transcript log: 'Level 1 ->'.
 	self level2.
 	Transcript log: 'Level 1 <-'.
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> level2 [
+GenPlaygroundClass >> level2 [
 	Transcript log: 'Level 2 ->'.
 	self level3.
 	Transcript log: 'Level 2 <-'.
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> level3 [
+GenPlaygroundClass >> level3 [
 	Transcript log: 'Level 3 ->'.
 	self level4.
 	Transcript log: 'Level 3 <-'.
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> level4 [
+GenPlaygroundClass >> level4 [
 	Transcript log: 'Level 4 ->'.
 	1halt.
 	tmp resume: 99.
@@ -101,7 +104,7 @@ AAA_ContextPerformanceTests >> level4 [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> levels [
+GenPlaygroundClass >> levels [
 	| x |
 	Transcript log: 'Levels ->'.
 	[tmp := thisContext. x := self level1] value.
@@ -109,7 +112,7 @@ AAA_ContextPerformanceTests >> levels [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> levelsWithGoto [
+GenPlaygroundClass >> levelsWithGoto [
 	| x pc|
 	Transcript log: 'Levels ->'.
 	tmp := thisContext.
@@ -122,12 +125,12 @@ AAA_ContextPerformanceTests >> levelsWithGoto [
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> rawStream: n [
+GenPlaygroundClass >> rawStream: n [
 	(1 to: n) readStreamDo: [ :s | s next ]
 ]
 
 { #category : #'accessing - token' }
-AAA_ContextPerformanceTests >> resumeAContext [
+GenPlaygroundClass >> resumeAContext [
 	"This shows that one can resule a context as long as it is still active"
 	Transcript log: '1) Pre resume'.
 	self resumeAContext: thisContext.
@@ -135,35 +138,35 @@ AAA_ContextPerformanceTests >> resumeAContext [
 ]
 
 { #category : #'accessing - token' }
-AAA_ContextPerformanceTests >> resumeAContext: ctx [
+GenPlaygroundClass >> resumeAContext: ctx [
 	Transcript log: '2) Pre resume'.
 	ctx resume.
 	Transcript log: '2) Post resume'
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> return7byContext [
+GenPlaygroundClass >> return7byContext [
 	thisContext return: 7.
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> return7normally [
+GenPlaygroundClass >> return7normally [
 	^7
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> suspendAttachCycles: n [
+GenPlaygroundClass >> suspendAttachCycles: n [
 	| co |
 	co := GenCoroutine new on: [ :cr | n timesRepeat: [ cr suspend ] ].
 	n timesRepeat: [ co attach ].
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> withThisContext [
+GenPlaygroundClass >> withThisContext [
 	^thisContext
 ]
 
 { #category : #'as yet unclassified' }
-AAA_ContextPerformanceTests >> withThisContextSender [
+GenPlaygroundClass >> withThisContextSender [
 	^thisContext sender
 ]
