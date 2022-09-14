@@ -1,19 +1,7 @@
 "
 I implement a simple generator.
-The generator is run in a seperate process. The generator uses suspend/resume to to control its execution, whereas the client is controled by a semaphore.
-
-
-```
-""Playground""
-SmalltalkImage current garbageCollect. 8.
-
-gen := (ThreadGenerator on: [ :gen | 1 to: 10 do: [:i | gen yield: i] ]).
-gen := ThreadGenerator on: [ :gen | gen yield: 99 ].
-gen next.
-gen hasNext.
-
-col := OrderedCollection new.[ gen hasNext ] whileTrue: [ col add: gen next ].col.
-```
+The generator is run in a seperate process. 
+The client and the generator never run at the same time, controlled by suspend and resume.
 "
 Class {
 	#name : #ProcessSuspendGenerator,
@@ -22,8 +10,8 @@ Class {
 		'nextVal',
 		'nextReturn',
 		'finished',
-		'clientSem',
-		'genProcess'
+		'genProcess',
+		'clientProcess'
 	],
 	#category : #'AA_Experiments'
 }
@@ -45,35 +33,28 @@ ProcessSuspendGenerator class >> somePrimes [
 
 { #category : #testing }
 ProcessSuspendGenerator >> atEnd [
-	^ self hasNext 
-]
-
-{ #category : #testing }
-ProcessSuspendGenerator >> hasNext [
-	|hasNext|
-	clientSem wait.
-	hasNext := finished not.
-	clientSem signal.
-	^ hasNext
+	^ finished
 ]
 
 { #category : #accessing }
 ProcessSuspendGenerator >> next [
 	"Take next value, and release generator"
 	|next|
-	clientSem wait.
+	finished ifTrue: [ ^nil ].
 	next := nextVal.
+	clientProcess := Processor activeProcess.
 	genProcess resume.
+	clientProcess suspend.
 	^ next 
 ]
 
 { #category : #'instance creation' }
 ProcessSuspendGenerator >> on: genBlock [
-	clientSem := Semaphore new.
-	genProcess := Semaphore new.
 	finished := false.
-	genProcess := [ genBlock value: self. finished := true. clientSem signal] newProcess.
+	genProcess := [ genBlock value: self. finished := true. clientProcess resume] newProcess.
 	genProcess resume.
+	clientProcess := Processor activeProcess.
+	clientProcess suspend.
 
 ]
 
@@ -81,7 +62,7 @@ ProcessSuspendGenerator >> on: genBlock [
 ProcessSuspendGenerator >> yield: aValue [
 	"Yield the value to client, and wait for consumption (next call)"
 	nextVal := aValue.
-	clientSem signal.
+	clientProcess resume.
 	genProcess suspend.
 	
 ]

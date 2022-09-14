@@ -3,11 +3,10 @@ I implement a simple generator.
 The generator is run in a seperate process, and it synchronize with the client thread using two semaphores, one for waiting the client, and one for waiting the generator
 "
 Class {
-	#name : #ProcessSemGenerator,
+	#name : #ProcessSemaphoreGenerator,
 	#superclass : #Object,
 	#instVars : [
 		'nextVal',
-		'nextReturn',
 		'finished',
 		'clientSem',
 		'genSem'
@@ -16,12 +15,12 @@ Class {
 }
 
 { #category : #'instance creation' }
-ProcessSemGenerator class >> on: genBlock [
+ProcessSemaphoreGenerator class >> on: genBlock [
 	^ self new on: genBlock.
 ]
 
 { #category : #'instance creation' }
-ProcessSemGenerator class >> somePrimes [
+ProcessSemaphoreGenerator class >> somePrimes [
 	"self somePrimes" 
 	<example>
 	^ String streamContents: [ :str | 
@@ -31,12 +30,12 @@ ProcessSemGenerator class >> somePrimes [
 ]
 
 { #category : #testing }
-ProcessSemGenerator >> atEnd [
+ProcessSemaphoreGenerator >> atEnd [
 	^ self hasNext 
 ]
 
 { #category : #testing }
-ProcessSemGenerator >> hasNext [
+ProcessSemaphoreGenerator >> hasNext [
 	|hasNext|
 	clientSem wait.
 	hasNext := finished not.
@@ -45,9 +44,10 @@ ProcessSemGenerator >> hasNext [
 ]
 
 { #category : #accessing }
-ProcessSemGenerator >> next [
+ProcessSemaphoreGenerator >> next [
 	"Take next value, and release generator"
 	|next|
+	finished ifTrue: [ ^nil ].
 	clientSem wait.
 	next := nextVal.
 	genSem signal.
@@ -55,7 +55,7 @@ ProcessSemGenerator >> next [
 ]
 
 { #category : #'instance creation' }
-ProcessSemGenerator >> on: genBlock [
+ProcessSemaphoreGenerator >> on: genBlock [
 	clientSem := Semaphore new.
 	genSem := Semaphore new.
 	finished := false.
@@ -65,7 +65,7 @@ ProcessSemGenerator >> on: genBlock [
 ]
 
 { #category : #public }
-ProcessSemGenerator >> yield: aValue [
+ProcessSemaphoreGenerator >> yield: aValue [
 	"Yield the value to client, and wait for consumption (next call)"
 	nextVal := aValue.
 	clientSem signal.

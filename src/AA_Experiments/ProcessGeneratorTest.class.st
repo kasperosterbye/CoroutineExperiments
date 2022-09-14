@@ -59,7 +59,7 @@ ProcessGeneratorTest >> testSpeedCompare [
 ProcessGeneratorTest >> testSpeedCompare_ThreadBased [
 	|N semaphoreGenerator suspendGenerator semTime suspendTime|
 	N := 10*1000*1000.
-	semaphoreGenerator := ProcessSemGenerator on: [ :g | 1 to: N do: [:i | g yield: i] ].
+	semaphoreGenerator := ProcessSemaphoreGenerator on: [ :g | 1 to: N do: [:i | g yield: i] ].
 	suspendGenerator := ProcessSuspendGenerator  on: [ :g | 1 to: N do: [:i | g yield: i]  ].
 	semTime := Time microsecondsToRun: 
 		[self eatAllIn:  semaphoreGenerator ].

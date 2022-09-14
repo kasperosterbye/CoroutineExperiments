@@ -64,6 +64,14 @@ AAA_ContextPerformanceTests >> generatorCycles: n [
 ]
 
 { #category : #'as yet unclassified' }
+AAA_ContextPerformanceTests >> hiresRes [
+	| x y |
+	x := Smalltalk highResClock.
+	y := Smalltalk highResClock.
+	^ y-x
+]
+
+{ #category : #'as yet unclassified' }
 AAA_ContextPerformanceTests >> level1 [
 	Transcript log: 'Level 1 ->'.
 	self level2.

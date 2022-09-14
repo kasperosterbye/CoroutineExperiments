@@ -17,6 +17,7 @@ GeneratorSort >> merge: gen1 and: gen2 [
 					ifTrue: [ gen yield: gen1 next]
 					ifFalse: [ gen yield: gen2 next].
 				 ].
+		"One of them will be empty, only one of the loops will run"
 		[ gen1 atEnd ] whileFalse:[ gen yield: gen1 next ].
 		[ gen2 atEnd ] whileFalse:[ gen yield: gen2 next ]
 	]
