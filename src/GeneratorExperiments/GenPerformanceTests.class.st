@@ -7,43 +7,38 @@ Class {
 	#category : #'GeneratorExperiments-Performance'
 }
 
-{ #category : #'as yet unclassified' }
-GenPerformanceTests >> performMeasurementNumbers [
-	| candidates timer |
-	candidates := { GenGenerator. GenSimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
-	timer := GenExperimentTimer new
-		blockReps: 100;
-		measureReps: 1000.
-	^ candidates collect: [ :generator |
-		Smalltalk garbageCollect.
-		generator name -> (timer forkingMinFor: [ | gen |
-			gen := self yieldNumbers: generator.
-			[ gen atEnd ] whileFalse: [ gen next ]
-			])]
+{ #category : #subjects }
+GenPerformanceTests >> generators [
+	^ { GenGenerator. GenSimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
+	
 ]
 
-{ #category : #'as yet unclassified' }
-GenPerformanceTests >> performMeasurementPrimes [
-	| candidates timer |
-	candidates := { GenGenerator. GenSimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
+{ #category : #performance }
+GenPerformanceTests >> performMeasurementNumbers [
+	| primesBody timer |
+	primesBody := [ :gen | 
+		(1 to: 100) do: [ :i | gen yield: i ] ].
 	timer := GenExperimentTimer new
 		blockReps: 1;
 		measureReps: 500.
-	^ candidates collect: [ :generator |
+	^ self generators collect: [ :generator |
 		generator name -> (timer minFor: [ | gen |
-			gen := self yieldPrimes: generator.
+			gen := generator on: primesBody.
 			[ gen atEnd ] whileFalse: [ gen next ]
 			])]
 ]
 
-{ #category : #'as yet unclassified' }
-GenPerformanceTests >> yieldNumbers: generatorClass [
-	^ generatorClass on: [ :gen | 
-		(1 to: 10) do: [ :i | gen yield: i ] ].
-]
-
-{ #category : #'as yet unclassified' }
-GenPerformanceTests >> yieldPrimes: generatorClass [
-	^ generatorClass on: [ :gen | 
-		(1000000 to: 1100000) do: [ :i | i isPrime ifTrue: [ gen yield: i ] ] ].
+{ #category : #performance }
+GenPerformanceTests >> performMeasurementPrimes [
+	| primesBody timer |
+	primesBody := [ :gen | 
+		1000000 to: 1100000 do: [ :i | i isPrime ifTrue: [ gen yield: i ] ] ].
+	timer := GenExperimentTimer new
+		blockReps: 1;
+		measureReps: 500.
+	^ self generators collect: [ :generator |
+		generator name -> (timer minFor: [ | gen |
+			gen := generator on: primesBody.
+			[ gen atEnd ] whileFalse: [ gen next ]
+			])]
 ]
