@@ -2,21 +2,21 @@
 An AAA_GeneratorTest is a test class for testing the behavior of AAA_Generator
 "
 Class {
-	#name : #'AAA_GeneratorTest',
+	#name : #GenGeneratorTest,
 	#superclass : #TestCase,
-	#category : #'AA_Experiments-Tests'
+	#category : #'GeneratorExperiments-Tests'
 }
 
 { #category : #accessing }
-AAA_GeneratorTest class >> packageNamesUnderTest [
+GenGeneratorTest class >> packageNamesUnderTest [
 	^ #('Generator')
 ]
 
 { #category : #generators }
-AAA_GeneratorTest >> fibonacciSequence [
+GenGeneratorTest >> fibonacciSequence [
 	"Yields an infinite sequence of fibonacci numbers."
 	
-	^ AAA_Generator on: [ :generator |
+	^ GenGenerator on: [ :generator |
 		| a b |
 		a := 0. b := 1.
 		[ a := b + (b := a).
@@ -25,16 +25,16 @@ AAA_GeneratorTest >> fibonacciSequence [
 ]
 
 { #category : #generators }
-AAA_GeneratorTest >> numbersBetween: aStartInteger and: aStopInteger [
+GenGeneratorTest >> numbersBetween: aStartInteger and: aStopInteger [
 	"Yields the nubmers between aStartInteger and aStopInteger."
 	
-	^ AAA_Generator on: [ :generator |
+	^ GenGenerator on: [ :generator |
 		aStartInteger to: aStopInteger 
 			do: [ :value | generator yield: value ] ]
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testAtEnd [
+GenGeneratorTest >> testAtEnd [
 	| generator |
 	generator := self numbersBetween: 1 and: 3.
 	self deny: generator atEnd.
@@ -47,10 +47,10 @@ AAA_GeneratorTest >> testAtEnd [
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testClose [
+GenGeneratorTest >> testClose [
 	| generator doEnsure notEnsure |
 	doEnsure := notEnsure := 0.
-	[ generator := AAA_Generator
+	[ generator := GenGenerator
 		on: [ :g | 
 			[ g
 				yield: 1;
@@ -74,25 +74,25 @@ AAA_GeneratorTest >> testClose [
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testContents [
+GenGeneratorTest >> testContents [
 	| generator |
 	generator := self numbersBetween: 1 and: 3.
 	self assert: generator contents equals: #(1 2 3)
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testEmpty [
+GenGeneratorTest >> testEmpty [
 	| generator |
-	generator := AAA_Generator on: [ :g | ].
+	generator := GenGenerator on: [ :g | ].
 	self assert: generator atEnd.
 	self assert: generator peek isNil.
 	self assert: generator next isNil
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testEnsure [
+GenGeneratorTest >> testEnsure [
 	| generator |
-	generator := AAA_Generator
+	generator := GenGenerator
 		on: [ :g | 
 			[ g
 				yield: 1;
@@ -102,11 +102,11 @@ AAA_GeneratorTest >> testEnsure [
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testErrorPropagation [
+GenGeneratorTest >> testErrorPropagation [
 	"Ensure that errors in the generator block are properly propagated"
 
 	| generator |
-	generator := AAA_Generator
+	generator := GenGenerator
 		on: [ :g | 
 			g yield: 1.
 			g error: 'yo' ].
@@ -114,14 +114,14 @@ AAA_GeneratorTest >> testErrorPropagation [
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testFibonacci [
+GenGeneratorTest >> testFibonacci [
 	| generator |
 	generator := self fibonacciSequence.
 	self assert: (generator next: 10) asArray equals: #(1 1 2 3 5 8 13 21 34 55)
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testNext [
+GenGeneratorTest >> testNext [
 	| generator |
 	generator := self numbersBetween: 1 and: 3.
 	self assert: generator next equals: 1.
@@ -131,7 +131,7 @@ AAA_GeneratorTest >> testNext [
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testPeek [
+GenGeneratorTest >> testPeek [
 	| generator |
 	generator := self numbersBetween: 1 and: 3.
 	self assert: generator peek equals: 1.
@@ -141,7 +141,7 @@ AAA_GeneratorTest >> testPeek [
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testReset [
+GenGeneratorTest >> testReset [
 	| generator |
 	generator := self numbersBetween: 1 and: 3.
 	self assert: generator next equals: 1.
@@ -156,12 +156,12 @@ AAA_GeneratorTest >> testReset [
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testResetUnwind [
+GenGeneratorTest >> testResetUnwind [
 	"Just like close, just using reset"
 
 	| generator doEnsure notEnsure |
 	doEnsure := notEnsure := 0.
-	[ generator := AAA_Generator
+	[ generator := GenGenerator
 		on: [ :g | 
 			[ g
 				yield: 1;
@@ -185,9 +185,9 @@ AAA_GeneratorTest >> testResetUnwind [
 ]
 
 { #category : #tests }
-AAA_GeneratorTest >> testSimple [
+GenGeneratorTest >> testSimple [
 	| generator |
-	generator := AAA_Generator
+	generator := GenGenerator
 		on: [ :g | 
 			g
 				yield: 1;

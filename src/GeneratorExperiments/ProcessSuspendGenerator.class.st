@@ -13,7 +13,7 @@ Class {
 		'genProcess',
 		'clientProcess'
 	],
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #'instance creation' }

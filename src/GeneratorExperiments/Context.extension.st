@@ -1,6 +1,6 @@
 Extension { #name : #Context }
 
-{ #category : #'*AA_Experiments' }
+{ #category : #'*GeneratorExperiments' }
 Context >> inspectSourceWithNextPC [
 	<inspectorPresentationOrder: 20 title: 'Source'>
 	pc 

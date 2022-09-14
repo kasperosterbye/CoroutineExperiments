@@ -1,7 +1,7 @@
 Class {
 	#name : #GeneratorSort,
 	#superclass : #Object,
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Performance'
 }
 
 { #category : #'as yet unclassified' }

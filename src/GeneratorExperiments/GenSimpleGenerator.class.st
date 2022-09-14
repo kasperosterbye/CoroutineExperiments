@@ -1,34 +1,28 @@
 "
-I implement a generator similar to `Generator`, but as a subclass of Coroutine.
+I am a generator based on the simple coroutine, thus giving no error propagation in case of errors in the generator.
 "
 Class {
-	#name : #'AAA_Generator',
+	#name : #GenSimpleGenerator,
 	#superclass : #Stream,
 	#instVars : [
 		'coroutine',
-		'next',
-		'resetBlock'
+		'next'
 	],
-	#category : #'AA_Experiments'
+	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #'instance creation' }
-AAA_Generator class >> on: block [
+GenSimpleGenerator class >> on: block [
 	^ self basicNew on: block
 ]
 
 { #category : #testing }
-AAA_Generator >> atEnd [
+GenSimpleGenerator >> atEnd [
 	^ coroutine isTerminated 
 ]
 
-{ #category : #'open/close' }
-AAA_Generator >> close [
-	coroutine terminate.
-]
-
 { #category : #accessing }
-AAA_Generator >> contents [
+GenSimpleGenerator >> contents [
 	"Answer the contents of this generator. Do not call this method on infinite generators."
 
 	| stream |
@@ -39,7 +33,7 @@ AAA_Generator >> contents [
 ]
 
 { #category : #accessing }
-AAA_Generator >> next [
+GenSimpleGenerator >> next [
 	| currentNext |
 	self atEnd ifTrue: [ ^ nil ].
 	currentNext := next.
@@ -48,30 +42,23 @@ AAA_Generator >> next [
 ]
 
 { #category : #accessing }
-AAA_Generator >> nextPut: aValue [
+GenSimpleGenerator >> nextPut: aValue [
 	^ self yield: aValue
 ]
 
 { #category : #accessing }
-AAA_Generator >> on: aBlock [
-	resetBlock := aBlock.
-	coroutine := AAA_Coroutine on: [:co | aBlock value: self ].
+GenSimpleGenerator >> on: aBlock [
+	coroutine := GenSimpleCoroutine on: [:co | aBlock value: self ].
 	next := coroutine attach.
 ]
 
 { #category : #public }
-AAA_Generator >> peek [
+GenSimpleGenerator >> peek [
 	^ next
 ]
 
-{ #category : #initialization }
-AAA_Generator >> reset [
-	coroutine terminate.
-	self on: resetBlock
-]
-
 { #category : #public }
-AAA_Generator >> yield: aValue [
+GenSimpleGenerator >> yield: aValue [
 	| currentNext |
 	currentNext := next.
 	next := coroutine suspend: aValue.
