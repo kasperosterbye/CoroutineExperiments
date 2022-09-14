@@ -18,6 +18,25 @@ AAA_ExperimentTimer >> blockReps: anObject [
 ]
 
 { #category : #'as yet unclassified' }
+AAA_ExperimentTimer >> forkingMinFor: block [ 
+	"return minimal execution time (least noice) in nanoseconds for blockReps executions of block.
+	Fork actual experiment at high process priority to reduce noice"
+	| experimenter awaitDone minTime| 
+	awaitDone := Semaphore new.
+	experimenter := [
+		minTime :=  Time microsecondsToRun:  [ blockReps timesRepeat: block ].
+		measureReps-1 timesRepeat: [ 
+			minTime := minTime min: (Time microsecondsToRun:   [ blockReps timesRepeat: block ]) ].
+		awaitDone signal.
+	] newProcess.
+	experimenter
+		priority: 80;
+		resume.
+	awaitDone wait.
+	^ minTime
+]
+
+{ #category : #'as yet unclassified' }
 AAA_ExperimentTimer >> forkingNanoMinFor: block [ 
 	"return minimal execution time (least noice) in nanoseconds for blockReps executions of block.
 	Fork actual experiment at high process priority to reduce noice"

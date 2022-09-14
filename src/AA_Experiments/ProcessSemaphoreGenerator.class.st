@@ -31,16 +31,7 @@ ProcessSemaphoreGenerator class >> somePrimes [
 
 { #category : #testing }
 ProcessSemaphoreGenerator >> atEnd [
-	^ self hasNext 
-]
-
-{ #category : #testing }
-ProcessSemaphoreGenerator >> hasNext [
-	|hasNext|
-	clientSem wait.
-	hasNext := finished not.
-	clientSem signal.
-	^ hasNext
+	^ finished
 ]
 
 { #category : #accessing }
