@@ -51,37 +51,24 @@ GenCoroutine >> isTerminated [
 
 { #category : #'instance creation' }
 GenCoroutine >> on: block [
-	suspensionPoint := thisContext "sender".
-	[ 	terminated := false.
-		unwindTo := thisContext.
-		self suspend: self.
-		[('Begin: ', self hash printString) traceCr. block value: self. ('Done: ', self hash printString) traceCr. ] 
-		on: Error
-		do: [:err | transfer := #CoroutineSignal->err].
-		('Ensure:', self hash printString, ' - ', transfer printString) traceCr.
-		terminated := true.
-		"transfer might be an error message"
-		self suspend: transfer] value.
+	suspensionPoint := thisContext.
+	self run: block 
 	
 ]
 
 { #category : #'instance creation' }
-GenCoroutine >> on_old: block [
-	suspensionPoint := thisContext "sender".
-	[ 	terminated := false.
-		unwindTo := thisContext.
-		self suspend: self.
-		[('Begin: ', self hash printString) traceCr. block value: self. ('Done: ', self hash printString) traceCr. ] 
+GenCoroutine >> run: block [
+
+	terminated := false.
+	unwindTo := thisContext.
+	self suspend: self.
+	[ unwindTo := thisContext.
+	  block value: self]
 		on: Error
-		do: [:err | transfer := #CoroutineSignal->err].
-		('Very done: ', self hash printString) traceCr. 
-		]
-	ensure:[
-		('Ensure:', self hash printString, ' - ', transfer printString) traceCr.
-		terminated := true.
-		"transfer might be an error message"
-		self suspend: transfer] .
-	
+		do: [ :err | transfer := #CoroutineSignal -> err ].
+	terminated := true.
+	"transfer might be an error message"
+	self suspend: transfer
 ]
 
 { #category : #coroutine }
@@ -96,8 +83,9 @@ GenCoroutine >> suspend: returnValue [
 	suspensionPoint := thisContext swapSender: suspensionPoint.
 	terminated ifTrue: [
 		(transfer isAssociation and: [ transfer key = #CoroutineSignal ])
-			ifTrue: [ transfer value signal ].
-		thisContext unwindTo: unwindTo.
+			ifTrue: [ 
+				transfer value signal.
+				thisContext unwindTo: unwindTo].
 		^ nil  ].
 	"I have been reattached, return value set by attach:"
 	^ transfer 
@@ -108,14 +96,7 @@ GenCoroutine >> terminate [
 	terminated ifTrue: [ ^self ].
 	suspensionPoint unwindTo: unwindTo.
 	suspensionPoint := unwindTo.
-	self attach.
-	
-]
-
-{ #category : #'debugging actions' }
-GenCoroutine >> terminate_old [
-	terminated ifFalse: [
-		suspensionPoint unwindTo: unwindTo].
-	terminated ifFalse: [ self attach ].
+	terminated := true.
+	suspensionPoint := thisContext swapSender: suspensionPoint
 	
 ]
