@@ -121,6 +121,19 @@ GenGeneratorTest >> testFibonacci [
 ]
 
 { #category : #tests }
+GenGeneratorTest >> testNested [
+	| g1 g2 |
+	'-----' traceCr.
+	g1 := GenGenerator  on: [ :gg | 'g1>' traceCr. gg yield: 10. '<g1' traceCr. ].		
+	g2 := GenGenerator on: [ :g | | n | 
+		'g2>' traceCr.
+		g1 peek traceCr. n := g1 next. ('n: ', n printString) trace. g yield: n. 
+		'<g2' trace.].
+	self assert: g2 atEnd not.
+	self assert: g2 next equals: 10
+]
+
+{ #category : #tests }
 GenGeneratorTest >> testNext [
 	| generator |
 	generator := self numbersBetween: 1 and: 3.

@@ -51,11 +51,16 @@ ProcessSuspendGenerator >> next [
 { #category : #'instance creation' }
 ProcessSuspendGenerator >> on: genBlock [
 	finished := false.
+	clientProcess := Processor activeProcess.
 	genProcess := [ genBlock value: self. finished := true. clientProcess resume] newProcess.
 	genProcess resume.
-	clientProcess := Processor activeProcess.
 	clientProcess suspend.
 
+]
+
+{ #category : #accessing }
+ProcessSuspendGenerator >> peek [
+	^ nextVal 
 ]
 
 { #category : #public }

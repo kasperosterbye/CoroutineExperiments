@@ -9,36 +9,49 @@ Class {
 
 { #category : #subjects }
 GenPerformanceTests >> generators [
-	^ { GenGenerator. GenSimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
+	^ { "GenGenerator. "GenSimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
 	
 ]
 
 { #category : #performance }
 GenPerformanceTests >> performMeasurementNumbers [
-	| primesBody timer |
-	primesBody := [ :gen | 
-		(1 to: 100) do: [ :i | gen yield: i ] ].
+	| generatorBody timer |
+	generatorBody := [ :gen | 
+		1 to: 10000 do: [ :i | gen yield: i ] ].
 	timer := GenExperimentTimer new
 		blockReps: 1;
-		measureReps: 500.
+		measureReps: 300.
 	^ self generators collect: [ :generator |
 		generator name -> (timer minFor: [ | gen |
-			gen := generator on: primesBody.
+			gen := generator on: generatorBody.
 			[ gen atEnd ] whileFalse: [ gen next ]
 			])]
 ]
 
 { #category : #performance }
 GenPerformanceTests >> performMeasurementPrimes [
-	| primesBody timer |
-	primesBody := [ :gen | 
+	| generatorBody timer |
+	generatorBody := [ :gen | 
 		1000000 to: 1100000 do: [ :i | i isPrime ifTrue: [ gen yield: i ] ] ].
 	timer := GenExperimentTimer new
 		blockReps: 1;
 		measureReps: 500.
 	^ self generators collect: [ :generator |
 		generator name -> (timer minFor: [ | gen |
-			gen := generator on: primesBody.
+			gen := generator on: generatorBody.
 			[ gen atEnd ] whileFalse: [ gen next ]
 			])]
+]
+
+{ #category : #performance }
+GenPerformanceTests >> performMeasurementSorting [
+	| sorter task timer |
+	sorter := GeneratorSort new.
+	task := sorter testSize: 1000.
+	timer := GenExperimentTimer new
+		blockReps: 1;
+		measureReps: 1.
+	^ self generators collect: [ :generator |
+		sorter generatorClass: generator.
+		generator name -> (timer minFor: [ sorter sort: task ])]
 ]

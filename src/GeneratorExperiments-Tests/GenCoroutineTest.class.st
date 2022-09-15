@@ -54,6 +54,31 @@ GenCoroutineTest >> testCanInitialize [
 	self deny: co isTerminated 
 ]
 
+{ #category : #tests }
+GenCoroutineTest >> testNested [
+	| c1 c2 foo |
+	c1 := GenCoroutine on: [ :cor | cor suspend: 17. cor suspend: 19 ].
+	c2 := GenCoroutine on: [ :cor | cor suspend: c1 attach. cor suspend: c1 attach. c1 attach ].
+	foo := c2 attach.
+	self assert: foo equals: 17.
+	foo := c2 attach.
+	self assert: foo equals: 19.
+	self deny: c2 isTerminated. 
+	c2 attach.
+	self assert: c1 isTerminated.
+	self assert: c2 isTerminated  
+]
+
+{ #category : #tests }
+GenCoroutineTest >> testNestedNoDoubleTermination [
+	| c1 c2 foo |
+	c1 := GenCoroutine on: [ :cor | ].
+	c2 := GenCoroutine on: [ :cor | c1 attach. cor suspend: 10].
+	foo := c2 attach.
+	self deny: c2 isTerminated. 
+	self assert: foo equals: 10.
+]
+
 { #category : #testing }
 GenCoroutineTest >> testSuspendValueReturn [
 	| co foo |

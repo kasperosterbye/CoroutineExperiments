@@ -55,6 +55,11 @@ ProcessSemaphoreGenerator >> on: genBlock [
 
 ]
 
+{ #category : #accessing }
+ProcessSemaphoreGenerator >> peek [
+	^ nextVal
+]
+
 { #category : #public }
 ProcessSemaphoreGenerator >> yield: aValue [
 	"Yield the value to client, and wait for consumption (next call)"
