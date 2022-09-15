@@ -95,11 +95,8 @@ GenCoroutineTest >> testSuspendValueReturn [
 { #category : #tests }
 GenCoroutineTest >> testTerminate [
 	| co |
-	'A' traceCr.
-	co := GenCoroutine on: [ :cor | '(B' traceCr. cor suspend. 'b)' traceCr. ].
-	'C' traceCr.
+	co := GenCoroutine on: [ :cor | cor suspend. ].
 	co terminate.
-	'D' traceCr.
 	self assert: co isTerminated.
 	self 
 		should: [ co attach ]

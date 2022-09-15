@@ -11,7 +11,7 @@ Class {
 	#category : #'GeneratorExperiments-Performance'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> aaa [
 	| b |
 	Transcript log: 'Pre aaa'.
@@ -42,11 +42,11 @@ GenPlaygroundClass >> bar: string [
 	^ tc
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> baselineMethodCall [
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> check7Return [
 	^ self return7byContext
 ]
@@ -59,14 +59,14 @@ GenPlaygroundClass >> foo [
 	^ [ i := i + 1. Transcript log: i asString ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> generatorCycles: n [
 	| co |
 	co := Generator on: [ :cr | n timesRepeat: [ cr yield: 99 ] ].
 	n timesRepeat: [ co next ].
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> hiresRes [
 	| x y |
 	x := Smalltalk highResClock.
@@ -74,36 +74,35 @@ GenPlaygroundClass >> hiresRes [
 	^ y-x
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> level1 [
 	Transcript log: 'Level 1 ->'.
 	self level2.
 	Transcript log: 'Level 1 <-'.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> level2 [
 	Transcript log: 'Level 2 ->'.
 	self level3.
 	Transcript log: 'Level 2 <-'.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> level3 [
 	Transcript log: 'Level 3 ->'.
 	self level4.
 	Transcript log: 'Level 3 <-'.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> level4 [
 	Transcript log: 'Level 4 ->'.
-	1halt.
 	tmp resume: 99.
 	Transcript log: 'Level 4 <-'.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> levels [
 	| x |
 	Transcript log: 'Levels ->'.
@@ -111,7 +110,7 @@ GenPlaygroundClass >> levels [
 	Transcript log: 'Levels <- ', x printString.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> levelsWithGoto [
 	| x pc|
 	Transcript log: 'Levels ->'.
@@ -124,7 +123,7 @@ GenPlaygroundClass >> levelsWithGoto [
 	thisContext pc: pc.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> rawStream: n [
 	(1 to: n) readStreamDo: [ :s | s next ]
 ]
@@ -144,29 +143,29 @@ GenPlaygroundClass >> resumeAContext: ctx [
 	Transcript log: '2) Post resume'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> return7byContext [
 	thisContext return: 7.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> return7normally [
 	^7
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> suspendAttachCycles: n [
 	| co |
 	co := GenCoroutine new on: [ :cr | n timesRepeat: [ cr suspend ] ].
 	n timesRepeat: [ co attach ].
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> withThisContext [
 	^thisContext
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #playground }
 GenPlaygroundClass >> withThisContextSender [
 	^thisContext sender
 ]

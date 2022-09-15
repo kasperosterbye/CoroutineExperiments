@@ -21,11 +21,11 @@ GenPerformanceTests >> performMeasurementNumbers [
 	timer := GenExperimentTimer new
 		blockReps: 1;
 		measureReps: 300.
-	^ self generators collect: [ :generator |
+	^ ((self generators collect: [ :generator |
 		generator name -> (timer minFor: [ | gen |
 			gen := generator on: generatorBody.
 			[ gen atEnd ] whileFalse: [ gen next ]
-			])]
+			])]) sort: [ :a :b | a value < b value ]) asOrderedDictionary 
 ]
 
 { #category : #performance }
@@ -35,12 +35,12 @@ GenPerformanceTests >> performMeasurementPrimes [
 		1000000 to: 1100000 do: [ :i | i isPrime ifTrue: [ gen yield: i ] ] ].
 	timer := GenExperimentTimer new
 		blockReps: 1;
-		measureReps: 500.
-	^ self generators collect: [ :generator |
+		measureReps: 300.
+	^ ((self generators collect: [ :generator |
 		generator name -> (timer minFor: [ | gen |
 			gen := generator on: generatorBody.
 			[ gen atEnd ] whileFalse: [ gen next ]
-			])]
+			])]) sort: [ :a :b | a value < b value ]) asOrderedDictionary 
 ]
 
 { #category : #performance }
@@ -49,9 +49,9 @@ GenPerformanceTests >> performMeasurementSorting [
 	sorter := GeneratorSort new.
 	task := sorter testSize: 100.
 	timer := GenExperimentTimer new
-		blockReps: 1;
-		measureReps: 200.
-	^ (self generators collect: [ :generator |
+		blockReps: 5;
+		measureReps: 300.
+	^ ((self generators collect: [ :generator |
 		sorter generatorClass: generator.
-		generator name -> (timer minFor: [ sorter sort: task ])]) asDictionary
+		generator name -> (timer minFor: [ sorter sort: task ])]) sort: [ :a :b | a value < b value ]) asOrderedDictionary 
 ]

@@ -17,7 +17,7 @@ GenExperimentTimer >> blockReps: anObject [
 	blockReps := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #performance }
 GenExperimentTimer >> forkingMinFor: block [ 
 	"return minimal execution time (least noice) in nanoseconds for blockReps executions of block.
 	Fork actual experiment at high process priority to reduce noice"
@@ -36,7 +36,7 @@ GenExperimentTimer >> forkingMinFor: block [
 	^ minTime
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #performance }
 GenExperimentTimer >> forkingNanoMinFor: block [ 
 	"return minimal execution time (least noice) in nanoseconds for blockReps executions of block.
 	Fork actual experiment at high process priority to reduce noice"
@@ -60,7 +60,7 @@ GenExperimentTimer >> measureReps: anObject [
 	measureReps := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #performance }
 GenExperimentTimer >> minFor: block [ 
 	"return minimal execution time (least noice) in microseconds for blockReps executions of block"
 	| minTime| 
@@ -70,7 +70,7 @@ GenExperimentTimer >> minFor: block [
 	^ minTime
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #performance }
 GenExperimentTimer >> nanoMinFor: block [ 
 	"return minimal execution time (least noice) in microseconds for blockReps executions of block"
 	| minTime| 
@@ -80,7 +80,7 @@ GenExperimentTimer >> nanoMinFor: block [
 	^ minTime
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #performance }
 GenExperimentTimer >> nanoSeconds [ 
 	"Stolen from malltalk highResClock"
 	<primitive: 'primitiveHighResClock'>

@@ -1,3 +1,6 @@
+"
+I am an abstract generator, proding some methods to make generators a stream
+"
 Class {
 	#name : #GenAbstractGenerator,
 	#superclass : #Stream,
