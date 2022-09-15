@@ -107,3 +107,13 @@ GenReducedGeneratorTest >> testSimple [
 		on: [ :g | g yield: 1; yield: 2 ].
 	self assert: generator upToEnd asArray equals: #(1 2)
 ]
+
+{ #category : #tests }
+GenReducedGeneratorTest >> testSort [
+	| sorter unsorted |
+	sorter := GeneratorSort new.
+	unsorted := #( 5 3 8 9 6 2).
+	sorter generatorClass: self generatorClass.
+	self assert: (sorter sort: unsorted) equals: #(2 3 5 6 8 9).
+		
+]
