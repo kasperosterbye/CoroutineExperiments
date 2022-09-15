@@ -9,7 +9,7 @@ Class {
 
 { #category : #subjects }
 GenPerformanceTests >> generators [
-	^ { "GenGenerator. "GenSimpleGenerator. ProcessSemaphoreGenerator. ProcessSuspendGenerator. Generator}.
+	^ { GenGenerator. GenSimpleGenerator. GenProcessSemaphoreGenerator. GenProcessSuspendGenerator. Generator}.
 	
 ]
 
@@ -47,11 +47,11 @@ GenPerformanceTests >> performMeasurementPrimes [
 GenPerformanceTests >> performMeasurementSorting [
 	| sorter task timer |
 	sorter := GeneratorSort new.
-	task := sorter testSize: 1000.
+	task := sorter testSize: 100.
 	timer := GenExperimentTimer new
 		blockReps: 1;
-		measureReps: 1.
-	^ self generators collect: [ :generator |
+		measureReps: 200.
+	^ (self generators collect: [ :generator |
 		sorter generatorClass: generator.
-		generator name -> (timer minFor: [ sorter sort: task ])]
+		generator name -> (timer minFor: [ sorter sort: task ])]) asDictionary
 ]

@@ -1,10 +1,10 @@
 Class {
-	#name : #GenGeneratorTest,
+	#name : #GenPharoGeneratorTest,
 	#superclass : #GenFullGeneratorTest,
 	#category : #'GeneratorExperiments-Tests'
 }
 
 { #category : #accessing }
-GenGeneratorTest >> generatorClass [
-	^ GenGenerator
+GenPharoGeneratorTest >> generatorClass [
+	^ Generator
 ]

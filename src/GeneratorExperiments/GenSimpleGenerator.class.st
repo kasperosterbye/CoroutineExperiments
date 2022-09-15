@@ -3,18 +3,13 @@ I am a generator based on the simple coroutine, thus giving no error propagation
 "
 Class {
 	#name : #GenSimpleGenerator,
-	#superclass : #Stream,
+	#superclass : #GenAbstractGenerator,
 	#instVars : [
 		'coroutine',
 		'next'
 	],
 	#category : #'GeneratorExperiments-Generators'
 }
-
-{ #category : #'instance creation' }
-GenSimpleGenerator class >> on: block [
-	^ self basicNew on: block
-]
 
 { #category : #testing }
 GenSimpleGenerator >> atEnd [

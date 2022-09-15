@@ -3,7 +3,7 @@ I implement a generator similar to `Generator`, but as a subclass of Coroutine.
 "
 Class {
 	#name : #GenGenerator,
-	#superclass : #Stream,
+	#superclass : #GenAbstractGenerator,
 	#instVars : [
 		'coroutine',
 		'next',
@@ -11,11 +11,6 @@ Class {
 	],
 	#category : #'GeneratorExperiments-Generators'
 }
-
-{ #category : #'instance creation' }
-GenGenerator class >> on: block [
-	^ self basicNew on: block
-]
 
 { #category : #testing }
 GenGenerator >> atEnd [
