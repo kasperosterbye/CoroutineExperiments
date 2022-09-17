@@ -9,7 +9,7 @@ Class {
 
 { #category : #subjects }
 GenPerformanceTests >> generators [
-	^ { GenGenerator. GenSimpleGenerator. GenProcessSemaphoreGenerator. GenProcessSuspendGenerator. Generator}.
+	^ { GenGenerator. GenProcessSemaphoreGenerator.GenProcessSuspendGenerator. Generator}.
 	
 ]
 
@@ -32,7 +32,7 @@ GenPerformanceTests >> performMeasurementNumbers [
 GenPerformanceTests >> performMeasurementPrimes [
 	| generatorBody timer |
 	generatorBody := [ :gen | 
-		1000000 to: 1100000 do: [ :i | i isPrime ifTrue: [ gen yield: i ] ] ].
+		1000000 to: 1020000 do: [ :i | i isPrime ifTrue: [ gen yield: i ] ] ].
 	timer := GenExperimentTimer new
 		blockReps: 1;
 		measureReps: 300.

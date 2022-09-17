@@ -1,6 +1,6 @@
 Class {
 	#name : #GenProcessSemaphoreGeneratorTest,
-	#superclass : #GenReducedGeneratorTest,
+	#superclass : #GenPharoGeneratorTest,
 	#category : #'GeneratorExperiments-Tests'
 }
 

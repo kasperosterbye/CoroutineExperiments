@@ -1,6 +1,6 @@
 Class {
 	#name : #GenGeneratorTest,
-	#superclass : #GenFullGeneratorTest,
+	#superclass : #GenPharoGeneratorTest,
 	#category : #'GeneratorExperiments-Tests'
 }
 

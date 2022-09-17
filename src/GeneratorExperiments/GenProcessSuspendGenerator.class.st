@@ -1,17 +1,16 @@
 "
-I implement a simple generator.
-The generator is run in a seperate process. 
-The client and the generator never run at the same time, controlled by suspend and resume.
+I am a generator where the generator is run in a separate process.
+The client and generator synchronize using suspend/resume.
 "
 Class {
 	#name : #GenProcessSuspendGenerator,
 	#superclass : #GenAbstractGenerator,
 	#instVars : [
 		'nextVal',
-		'nextReturn',
 		'finished',
 		'genProcess',
-		'clientProcess'
+		'clientProcess',
+		'savedGenBlock'
 	],
 	#category : #'GeneratorExperiments-Generators'
 }
@@ -19,6 +18,12 @@ Class {
 { #category : #testing }
 GenProcessSuspendGenerator >> atEnd [
 	^ finished
+]
+
+{ #category : #'open/close' }
+GenProcessSuspendGenerator >> close [
+	genProcess terminate.
+	finished := true.
 ]
 
 { #category : #accessing }
@@ -35,9 +40,16 @@ GenProcessSuspendGenerator >> next [
 
 { #category : #'instance creation' }
 GenProcessSuspendGenerator >> on: genBlock [
+	savedGenBlock := genBlock.
 	finished := false.
 	clientProcess := Processor activeProcess.
-	genProcess := [ genBlock value: self. finished := true. clientProcess resume] newProcess.
+	genProcess := [ 
+		[genBlock value: self] 
+			on: Error 
+			do: [:err |
+				clientProcess signalException: err]. 
+		finished := true. 
+		clientProcess resume] newProcess.
 	genProcess resume.
 	clientProcess suspend.
 
@@ -46,6 +58,13 @@ GenProcessSuspendGenerator >> on: genBlock [
 { #category : #accessing }
 GenProcessSuspendGenerator >> peek [
 	^ nextVal 
+]
+
+{ #category : #initialization }
+GenProcessSuspendGenerator >> reset [
+	genProcess terminate.
+	self on: savedGenBlock 
+	
 ]
 
 { #category : #public }

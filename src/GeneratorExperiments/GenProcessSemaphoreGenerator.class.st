@@ -1,6 +1,6 @@
 "
-I implement a simple generator.
-The generator is run in a seperate process, and it synchronize with the client thread using two semaphores, one for waiting the client, and one for waiting the generator
+I am a generator where the generator is run in a separate process.
+The client and generator synchronize using two semaphores.
 "
 Class {
 	#name : #GenProcessSemaphoreGenerator,
@@ -8,53 +8,75 @@ Class {
 	#instVars : [
 		'nextVal',
 		'finished',
-		'clientSem',
-		'genSem'
+		'genProcess',
+		'clientProcess',
+		'savedGenBlock',
+		'semNextReady',
+		'holdGenerator'
 	],
 	#category : #'GeneratorExperiments-Generators'
 }
 
-{ #category : #testing }
+{ #category : #accessing }
 GenProcessSemaphoreGenerator >> atEnd [
-	clientSem wait.
-	clientSem signal.
+	"(finished not and: [semNextReady isSignaled ])ifFalse:[ semNextReady wait. semNextReady signal.]."
 	^ finished
+]
+
+{ #category : #'open/close' }
+GenProcessSemaphoreGenerator >> close [
+	genProcess terminate.
+	finished := true.
 ]
 
 { #category : #accessing }
 GenProcessSemaphoreGenerator >> next [
 	"Take next value, and release generator"
 	|next|
-	clientSem wait.
 	finished ifTrue: [ ^nil ].
 	next := nextVal.
-	genSem signal.
+	holdGenerator signal.
+	"wait for next value to be computed"
+	semNextReady wait.
 	^ next 
 ]
 
 { #category : #'instance creation' }
 GenProcessSemaphoreGenerator >> on: genBlock [
-	
-	clientSem := Semaphore new.
-	genSem := Semaphore new.
+	clientProcess := Processor activeProcess.
+	savedGenBlock := genBlock.
+	semNextReady := Semaphore new.
+	holdGenerator := Semaphore new.
 	finished := false.
-	[ genBlock value: self. finished := true. clientSem signal] fork.
+	genProcess := [
+		[genBlock value: self] 
+			on: Error 
+			do: [:err | clientProcess signalException: err].
+		finished := true. 
+		semNextReady signal] fork.
+	semNextReady wait.
 	
 
 ]
 
 { #category : #accessing }
 GenProcessSemaphoreGenerator >> peek [
-	clientSem wait.
-	clientSem signal.
+	"(finished not and: [semNextReady isSignaled ])ifFalse:[ semNextReady wait. semNextReady signal.]."
 	^ nextVal
+]
+
+{ #category : #initialization }
+GenProcessSemaphoreGenerator >> reset [
+	genProcess terminate.
+	self on: savedGenBlock 
+	
 ]
 
 { #category : #public }
 GenProcessSemaphoreGenerator >> yield: aValue [
 	"Yield the value to client, and wait for consumption (next call)"
 	nextVal := aValue.
-	clientSem signal.
-	genSem wait.
+	semNextReady signal.
+	holdGenerator wait.
 	
 ]
