@@ -9,7 +9,7 @@ Class {
 
 { #category : #subjects }
 GenPerformanceTests >> generators [
-	^ { GenGenerator. GenProcessSemaphoreGenerator.GenProcessSuspendGenerator. Generator}.
+	^ { GenCoGenerator. GenProcessSemaphoreGenerator.GenProcessSuspendGenerator. Generator}.
 	
 ]
 

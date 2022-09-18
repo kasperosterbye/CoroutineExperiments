@@ -2,7 +2,7 @@
 I implement a generator similar to `Generator`, but as a subclass of Coroutine.
 "
 Class {
-	#name : #GenGenerator,
+	#name : #GenCoGenerator,
 	#superclass : #GenAbstractGenerator,
 	#instVars : [
 		'coroutine',
@@ -13,17 +13,17 @@ Class {
 }
 
 { #category : #testing }
-GenGenerator >> atEnd [
+GenCoGenerator >> atEnd [
 	^ coroutine isTerminated 
 ]
 
 { #category : #'open/close' }
-GenGenerator >> close [
+GenCoGenerator >> close [
 	coroutine terminate.
 ]
 
 { #category : #accessing }
-GenGenerator >> contents [
+GenCoGenerator >> contents [
 	"Answer the contents of this generator. Do not call this method on infinite generators."
 
 	| stream |
@@ -33,8 +33,13 @@ GenGenerator >> contents [
 	^ stream contents
 ]
 
+{ #category : #initialization }
+GenCoGenerator >> coroutineClass [
+	^ GenSwapCoroutine
+]
+
 { #category : #accessing }
-GenGenerator >> next [
+GenCoGenerator >> next [
 	| currentNext |
 	self atEnd ifTrue: [ ^ nil ].
 	currentNext := next.
@@ -43,30 +48,30 @@ GenGenerator >> next [
 ]
 
 { #category : #accessing }
-GenGenerator >> nextPut: aValue [
+GenCoGenerator >> nextPut: aValue [
 	^ self yield: aValue
 ]
 
 { #category : #accessing }
-GenGenerator >> on: aBlock [
+GenCoGenerator >> on: aBlock [
 	resetBlock := aBlock.
-	coroutine := GenCoroutine on: [:co | aBlock value: self ].
+	coroutine := self coroutineClass  on: [:co | aBlock value: self ].
 	next := coroutine attach.
 ]
 
 { #category : #public }
-GenGenerator >> peek [
+GenCoGenerator >> peek [
 	^ next
 ]
 
 { #category : #initialization }
-GenGenerator >> reset [
+GenCoGenerator >> reset [
 	coroutine terminate.
 	self on: resetBlock
 ]
 
 { #category : #public }
-GenGenerator >> yield: aValue [
+GenCoGenerator >> yield: aValue [
 	| currentNext |
 	currentNext := next.
 	next := coroutine suspend: aValue.

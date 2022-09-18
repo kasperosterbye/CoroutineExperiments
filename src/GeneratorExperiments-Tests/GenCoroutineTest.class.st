@@ -7,10 +7,15 @@ Class {
 	#category : #'GeneratorExperiments-Tests'
 }
 
+{ #category : #'as yet unclassified' }
+GenCoroutineTest >> coroutineClass [
+	^ GenSuspendCoroutine 
+]
+
 { #category : #testing }
 GenCoroutineTest >> testAttachValueReturn [
 	| co foo |
-	co := GenCoroutine on: [ :cor | foo := cor suspend. foo := cor suspend].
+	co := self coroutineClass on: [ :cor | foo := cor suspend. foo := cor suspend].
 	co attach. "run to first suspend"
 	co attach: 17. "perform assignment, and run til next suspend"
 	self assert: foo equals: 17.
@@ -22,7 +27,7 @@ GenCoroutineTest >> testAttachValueReturn [
 { #category : #testing }
 GenCoroutineTest >> testCanAttach [
 	| co foo |
-	co := GenCoroutine on: [ :cor | foo := 17 ].
+	co := self coroutineClass on: [ :cor | foo := 17 ].
 	self assert: foo equals: nil.
 	co attach.
 	self assert: foo equals: 17.
@@ -32,7 +37,7 @@ GenCoroutineTest >> testCanAttach [
 { #category : #testing }
 GenCoroutineTest >> testCanAttachMultipleTimes [
 	| co foo |
-	co := GenCoroutine on: [ :cor | foo := 17. cor suspend. foo := 19. cor suspend. foo := 21 ].
+	co := self coroutineClass on: [ :cor | foo := 17. cor suspend. foo := 19. cor suspend. foo := 21 ].
 	self assert: foo equals: nil.
 	self deny: co isTerminated. 
 	co attach.
@@ -49,16 +54,16 @@ GenCoroutineTest >> testCanAttachMultipleTimes [
 { #category : #testing }
 GenCoroutineTest >> testCanInitialize [
 	| co |
-	co := GenCoroutine on: [ :cor |  ].
-	self assert: co class equals: GenCoroutine.
+	co := self coroutineClass on: [ :cor |  ].
+	self assert: co class equals: self coroutineClass.
 	self deny: co isTerminated 
 ]
 
 { #category : #tests }
 GenCoroutineTest >> testNested [
 	| c1 c2 foo |
-	c1 := GenCoroutine on: [ :cor | cor suspend: 17. cor suspend: 19 ].
-	c2 := GenCoroutine on: [ :cor | cor suspend: c1 attach. cor suspend: c1 attach. c1 attach ].
+	c1 := self coroutineClass on: [ :cor | cor suspend: 17. cor suspend: 19 ].
+	c2 := self coroutineClass on: [ :cor | cor suspend: c1 attach. cor suspend: c1 attach. c1 attach ].
 	foo := c2 attach.
 	self assert: foo equals: 17.
 	foo := c2 attach.
@@ -72,8 +77,8 @@ GenCoroutineTest >> testNested [
 { #category : #tests }
 GenCoroutineTest >> testNestedNoDoubleTermination [
 	| c1 c2 foo |
-	c1 := GenCoroutine on: [ :cor | ].
-	c2 := GenCoroutine on: [ :cor | c1 attach. cor suspend: 10].
+	c1 := self coroutineClass on: [ :cor | ].
+	c2 := self coroutineClass on: [ :cor | c1 attach. cor suspend: 10].
 	foo := c2 attach.
 	self deny: c2 isTerminated. 
 	self assert: foo equals: 10.
@@ -82,7 +87,7 @@ GenCoroutineTest >> testNestedNoDoubleTermination [
 { #category : #testing }
 GenCoroutineTest >> testSuspendValueReturn [
 	| co foo |
-	co := GenCoroutine on: [ :cor | cor suspend: 17. cor suspend: 19 ].
+	co := self coroutineClass on: [ :cor | cor suspend: 17. cor suspend: 19 ].
 	foo := co attach.
 	self assert: foo equals: 17.
 	foo := co attach.
@@ -95,7 +100,7 @@ GenCoroutineTest >> testSuspendValueReturn [
 { #category : #tests }
 GenCoroutineTest >> testTerminate [
 	| co |
-	co := GenCoroutine on: [ :cor | cor suspend. ].
+	co := self coroutineClass on: [ :cor | cor suspend. ].
 	co terminate.
 	self assert: co isTerminated.
 	self 
@@ -107,7 +112,7 @@ GenCoroutineTest >> testTerminate [
 GenCoroutineTest >> testTerminateWithUnwind [
 	| co foo|
 	foo := 17.
-	co := GenCoroutine on: [ :cor | [cor suspend] ensure: [ foo := 19 ] ].
+	co := self coroutineClass on: [ :cor | [cor suspend] ensure: [ foo := 19 ] ].
 	co attach.
 	co terminate.
 	self assert: co isTerminated.
@@ -117,7 +122,7 @@ GenCoroutineTest >> testTerminateWithUnwind [
 { #category : #testing }
 GenCoroutineTest >> testTerminationError [
 	| co |
-	co := GenCoroutine on: [ :cor | ].
+	co := self coroutineClass on: [ :cor | ].
 	"Test that empty coroutine can be attached"
 	co attach.
 	"Test that attaching a terminated coroutine gives error"
@@ -130,7 +135,7 @@ GenCoroutineTest >> testTerminationError [
 { #category : #testing }
 GenCoroutineTest >> testTerminationOnError [
 	| co |
-	co := GenCoroutine on: [ :cor | cor error: 'Uuups' ].
+	co := self coroutineClass on: [ :cor | cor error: 'Uuups' ].
 	"Test that empty coroutine can be attached"
 	self 
 		should: [co attach]

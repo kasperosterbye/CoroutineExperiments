@@ -13,7 +13,7 @@ The `suspend:` argument is returned as the result of the attach call. The argume
 - transfer - keeps the value passed back and forth between `attach:` and `suspend:`
 "
 Class {
-	#name : #GenCoroutine,
+	#name : #GenSwapCoroutine,
 	#superclass : #Object,
 	#instVars : [
 		'suspensionPoint',
@@ -25,17 +25,17 @@ Class {
 }
 
 { #category : #'instance creation' }
-GenCoroutine class >> on: block [
+GenSwapCoroutine class >> on: block [
 	^ self new on: block
 ]
 
 { #category : #coroutine }
-GenCoroutine >> attach [
+GenSwapCoroutine >> attach [
 	^ self attach: nil.
 ]
 
 { #category : #coroutine }
-GenCoroutine >> attach: returnValue [
+GenSwapCoroutine >> attach: returnValue [
 	terminated ifTrue: [ GenCoroutineTerminated signal ].
 	transfer := returnValue.
 	"attach the coroutine, and store caller in suspensionPoint"
@@ -45,19 +45,19 @@ GenCoroutine >> attach: returnValue [
 ]
 
 { #category : #coroutine }
-GenCoroutine >> isTerminated [
+GenSwapCoroutine >> isTerminated [
 	^ terminated
 ]
 
 { #category : #'instance creation' }
-GenCoroutine >> on: block [
+GenSwapCoroutine >> on: block [
 	suspensionPoint := thisContext.
 	self run: block 
 	
 ]
 
 { #category : #'instance creation' }
-GenCoroutine >> run: block [
+GenSwapCoroutine >> run: block [
 
 	terminated := false.
 	unwindTo := thisContext.
@@ -72,12 +72,12 @@ GenCoroutine >> run: block [
 ]
 
 { #category : #coroutine }
-GenCoroutine >> suspend [
+GenSwapCoroutine >> suspend [
 	^ self suspend: nil
 ]
 
 { #category : #coroutine }
-GenCoroutine >> suspend: returnValue [
+GenSwapCoroutine >> suspend: returnValue [
 	transfer := returnValue.
 	"resume caller of attach, and store my progress in suspensionPoint"
 	suspensionPoint := thisContext swapSender: suspensionPoint.
@@ -92,7 +92,7 @@ GenCoroutine >> suspend: returnValue [
 ]
 
 { #category : #'debugging actions' }
-GenCoroutine >> terminate [
+GenSwapCoroutine >> terminate [
 	terminated ifTrue: [ ^self ].
 	suspensionPoint unwindTo: unwindTo.
 	suspensionPoint := unwindTo.

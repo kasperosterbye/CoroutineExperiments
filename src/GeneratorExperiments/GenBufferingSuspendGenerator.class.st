@@ -1,45 +1,50 @@
 "
-I am a generator where the generator is run in a separate process.
-The client and generator synchronize using suspend/resume.
+I compute bufSize elements at a time (using repeated calls to yield). 
+Elements are still read one at a time.
 "
 Class {
-	#name : #GenProcessSuspendGenerator,
+	#name : #GenBufferingSuspendGenerator,
 	#superclass : #GenAbstractGenerator,
 	#instVars : [
-		'nextVal',
 		'finished',
 		'genProcess',
 		'clientProcess',
-		'savedGenBlock'
+		'savedGenBlock',
+		'buffer',
+		'index'
 	],
 	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #testing }
-GenProcessSuspendGenerator >> atEnd [
-	^ finished
+GenBufferingSuspendGenerator >> atEnd [
+	^ finished and: [ index = 0 ]
 ]
 
 { #category : #'open/close' }
-GenProcessSuspendGenerator >> close [
+GenBufferingSuspendGenerator >> close [
 	genProcess terminate.
 	finished := true.
 ]
 
 { #category : #accessing }
-GenProcessSuspendGenerator >> next [
+GenBufferingSuspendGenerator >> next [
 	"Take next value, and release generator"
 	|next|
-	finished ifTrue: [ ^nil ].
-	next := nextVal.
-	genProcess resume.
-	clientProcess suspend.
+	self atEnd ifTrue: [ ^nil ].
+	next := buffer at: index.
+	index := index - 1.
+	(finished not and: [ index = 0 ]) ifTrue: [ 
+		genProcess resume.
+		clientProcess suspend].
 	^ next 
 ]
 
 { #category : #'instance creation' }
-GenProcessSuspendGenerator >> on: genBlock [
+GenBufferingSuspendGenerator >> on: genBlock [
 	savedGenBlock := genBlock.
+	index := 0.
+	buffer := Array new: 10.
 	finished := false.
 	clientProcess := Processor activeProcess.
 	genProcess := [ 
@@ -55,22 +60,25 @@ GenProcessSuspendGenerator >> on: genBlock [
 ]
 
 { #category : #accessing }
-GenProcessSuspendGenerator >> peek [
-	^ nextVal 
+GenBufferingSuspendGenerator >> peek [
+	^ buffer at: index 
 ]
 
 { #category : #initialization }
-GenProcessSuspendGenerator >> reset [
+GenBufferingSuspendGenerator >> reset [
 	genProcess terminate.
 	self on: savedGenBlock 
 	
 ]
 
 { #category : #public }
-GenProcessSuspendGenerator >> yield: aValue [
+GenBufferingSuspendGenerator >> yield: aValue [
 	"Yield the value to client, and wait for consumption (next call)"
-	nextVal := aValue.
+	index := index + 1.
+	buffer at: index put: aValue .
+	index < buffer size 
+		ifTrue: [ ^ self ].
+	"Buffer full, let the client consume"
 	clientProcess resume.
-	genProcess suspend.
-	
+	genProcess suspend 
 ]

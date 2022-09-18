@@ -156,7 +156,7 @@ GenPlaygroundClass >> return7normally [
 { #category : #playground }
 GenPlaygroundClass >> suspendAttachCycles: n [
 	| co |
-	co := GenCoroutine new on: [ :cr | n timesRepeat: [ cr suspend ] ].
+	co := GenSwapCoroutine new on: [ :cr | n timesRepeat: [ cr suspend ] ].
 	n timesRepeat: [ co attach ].
 ]
 

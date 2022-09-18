@@ -1,10 +1,10 @@
 Class {
-	#name : #GenGeneratorTest,
+	#name : #GenSwapGeneratorTest,
 	#superclass : #GenPharoGeneratorTest,
 	#category : #'GeneratorExperiments-Tests'
 }
 
 { #category : #accessing }
-GenGeneratorTest >> generatorClass [
-	^ GenCoGenerator
+GenSwapGeneratorTest >> generatorClass [
+	^ GenCoSwapGenerator 
 ]
