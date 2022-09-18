@@ -4,7 +4,7 @@ An AAA_CoroutineTest is a test class for testing the behavior of AAA_Coroutine
 Class {
 	#name : #GenCoroutineTest,
 	#superclass : #TestCase,
-	#category : #'GeneratorExperiments-Tests'
+	#category : #'GeneratorExperiments-Tests-Generators'
 }
 
 { #category : #'as yet unclassified' }

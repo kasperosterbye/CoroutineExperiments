@@ -1,7 +1,7 @@
 Class {
 	#name : #GenSuspendCoroutineTest,
 	#superclass : #GenCoroutineTest,
-	#category : #'GeneratorExperiments-Tests'
+	#category : #'GeneratorExperiments-Tests-Generators'
 }
 
 { #category : #'as yet unclassified' }

@@ -4,7 +4,7 @@ An AAA_GeneratorTest is a test class for testing the behavior of AAA_Generator
 Class {
 	#name : #GenPharoGeneratorTest,
 	#superclass : #TestCase,
-	#category : #'GeneratorExperiments-Tests'
+	#category : #'GeneratorExperiments-Tests-Generators'
 }
 
 { #category : #accessing }

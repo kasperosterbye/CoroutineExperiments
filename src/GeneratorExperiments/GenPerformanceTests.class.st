@@ -9,8 +9,14 @@ Class {
 
 { #category : #subjects }
 GenPerformanceTests >> generators [
-	^ { GenCoGenerator. GenProcessSemaphoreGenerator.GenProcessSuspendGenerator. Generator}.
-	
+
+	^ { 
+		  GenCoSuspendpGenerator.
+		  GenCoSwapGenerator.
+		  GenProcessSemaphoreGenerator.
+		  GenProcessSuspendGenerator.
+		  GenBufferingSuspendGenerator.
+		  Generator }
 ]
 
 { #category : #performance }

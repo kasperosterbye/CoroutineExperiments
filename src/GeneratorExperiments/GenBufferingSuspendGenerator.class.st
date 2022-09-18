@@ -10,20 +10,20 @@ Class {
 		'genProcess',
 		'clientProcess',
 		'savedGenBlock',
-		'buffer',
-		'index'
+		'buffer'
 	],
 	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #testing }
 GenBufferingSuspendGenerator >> atEnd [
-	^ finished and: [ index = 0 ]
+	^ finished and: [ buffer isEmpty ]
 ]
 
 { #category : #'open/close' }
 GenBufferingSuspendGenerator >> close [
 	genProcess terminate.
+	buffer clear.
 	finished := true.
 ]
 
@@ -32,9 +32,9 @@ GenBufferingSuspendGenerator >> next [
 	"Take next value, and release generator"
 	|next|
 	self atEnd ifTrue: [ ^nil ].
-	next := buffer at: index.
-	index := index - 1.
-	(finished not and: [ index = 0 ]) ifTrue: [ 
+	next := buffer take.
+	(next isKindOf: Error) ifTrue: [ next signal ].
+	(finished not and: [ buffer isEmpty ] ) ifTrue: [ 
 		genProcess resume.
 		clientProcess suspend].
 	^ next 
@@ -43,17 +43,20 @@ GenBufferingSuspendGenerator >> next [
 { #category : #'instance creation' }
 GenBufferingSuspendGenerator >> on: genBlock [
 	savedGenBlock := genBlock.
-	index := 0.
-	buffer := Array new: 10.
+	buffer := GenBuffer new: 100.
 	finished := false.
 	clientProcess := Processor activeProcess.
 	genProcess := [ 
-		[genBlock value: self] 
+		[[genBlock value: self] 
 			on: Error 
 			do: [:err |
-				clientProcess signalException: err]. 
-		finished := true. 
-		clientProcess resume] newProcess.
+				buffer isEmpty
+					ifTrue: [clientProcess signalException: err]
+					ifFalse: [ buffer add: (GenGeneratorError new) ]
+					]]
+		ensure: [ 
+			finished := true. 
+			clientProcess resume]] newProcess.
 	genProcess resume.
 	clientProcess suspend.
 
@@ -61,7 +64,8 @@ GenBufferingSuspendGenerator >> on: genBlock [
 
 { #category : #accessing }
 GenBufferingSuspendGenerator >> peek [
-	^ buffer at: index 
+	buffer isEmpty ifTrue: [ ^ nil ].
+	^ buffer peek
 ]
 
 { #category : #initialization }
@@ -74,10 +78,9 @@ GenBufferingSuspendGenerator >> reset [
 { #category : #public }
 GenBufferingSuspendGenerator >> yield: aValue [
 	"Yield the value to client, and wait for consumption (next call)"
-	index := index + 1.
-	buffer at: index put: aValue .
-	index < buffer size 
-		ifTrue: [ ^ self ].
+	buffer add: aValue .
+	buffer isFull  
+		ifFalse: [ ^ self ].
 	"Buffer full, let the client consume"
 	clientProcess resume.
 	genProcess suspend 

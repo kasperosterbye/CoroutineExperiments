@@ -1,7 +1,7 @@
 Class {
 	#name : #GenProcessSemaphoreGeneratorTest,
 	#superclass : #GenPharoGeneratorTest,
-	#category : #'GeneratorExperiments-Tests'
+	#category : #'GeneratorExperiments-Tests-Generators'
 }
 
 { #category : #accessing }
