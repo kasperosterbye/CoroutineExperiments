@@ -35,6 +35,7 @@ GenBufferingSuspendGenerator >> next [
 	next := buffer take.
 	next isErrorObject ifTrue: [ next signal ].
 	(finished not and: [ buffer isEmpty ] ) ifTrue: [ 
+		clientProcess := Processor activeProcess.
 		genProcess resume.
 		clientProcess suspend].
 	^ next 
@@ -52,7 +53,7 @@ GenBufferingSuspendGenerator >> on: genBlock [
 			do: [:err |
 				buffer isEmpty
 					ifTrue: [clientProcess signalException: err]
-					ifFalse: [ buffer add: (GenGeneratorError new) ]
+					ifFalse: [ buffer add: err ]
 					]]
 		ensure: [ 
 			finished := true. 
