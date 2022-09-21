@@ -10,7 +10,7 @@ Class {
 		'transfer',
 		'unwindTo'
 	],
-	#category : #'GeneratorExperiments-Generators'
+	#category : #'GeneratorExperiments-Coroutines'
 }
 
 { #category : #'instance creation' }

@@ -11,7 +11,7 @@ Class {
 		'terminated',
 		'transfer'
 	],
-	#category : #'GeneratorExperiments-Generators'
+	#category : #'GeneratorExperiments-Coroutines'
 }
 
 { #category : #'instance creation' }
@@ -46,17 +46,15 @@ GenSuspendCoroutine >> isTerminated [
 { #category : #'instance creation' }
 GenSuspendCoroutine >> on: block [
 	terminated := false.
-	clientProcess := Processor activeProcess.
 	coProcess := [	
-		[ [ 
-			self suspend: self.
-			block value: self]
+		self suspend: self.
+		[ [block value: self]
 				on: Error
 				do: [ :err | clientProcess signalException: err ]]
-			ensure: [
+		ensure: [
 				terminated := true.
 				clientProcess resume].
-		] fork.
+	] newProcess.
 	^ self attach 
 ]
 
@@ -68,8 +66,6 @@ GenSuspendCoroutine >> suspend [
 { #category : #coroutine }
 GenSuspendCoroutine >> suspend: returnValue [
 	"called by co-process"
-	| returnToClient |
-	returnToClient := transfer.
 	transfer := returnValue.
 	clientProcess resume.
 	coProcess suspend.

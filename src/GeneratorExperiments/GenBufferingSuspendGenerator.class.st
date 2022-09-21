@@ -33,7 +33,7 @@ GenBufferingSuspendGenerator >> next [
 	|next|
 	self atEnd ifTrue: [ ^nil ].
 	next := buffer take.
-	(next isKindOf: Error) ifTrue: [ next signal ].
+	next isErrorObject ifTrue: [ next signal ].
 	(finished not and: [ buffer isEmpty ] ) ifTrue: [ 
 		genProcess resume.
 		clientProcess suspend].

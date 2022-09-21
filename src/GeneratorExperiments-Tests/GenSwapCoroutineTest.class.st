@@ -1,7 +1,7 @@
 Class {
 	#name : #GenSwapCoroutineTest,
 	#superclass : #GenCoroutineTest,
-	#category : #'GeneratorExperiments-Tests-Generators'
+	#category : #'GeneratorExperiments-Tests-Coroutines'
 }
 
 { #category : #'as yet unclassified' }

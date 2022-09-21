@@ -35,7 +35,7 @@ GenCoGenerator >> contents [
 
 { #category : #initialization }
 GenCoGenerator >> coroutineClass [
-	^ GenSwapCoroutine
+	self subclassResponsibility
 ]
 
 { #category : #accessing }
@@ -55,7 +55,7 @@ GenCoGenerator >> nextPut: aValue [
 { #category : #accessing }
 GenCoGenerator >> on: aBlock [
 	resetBlock := aBlock.
-	coroutine := self coroutineClass  on: [:co | aBlock value: self ].
+	coroutine := self coroutineClass on: [:co | aBlock value: self ].
 	next := coroutine attach.
 ]
 

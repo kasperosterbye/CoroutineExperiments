@@ -61,12 +61,20 @@ GenExperimentTimer >> measureReps: anObject [
 ]
 
 { #category : #performance }
+GenExperimentTimer >> microToRun: aBlock [
+	| start |
+	start := self nanoSeconds.
+	aBlock value"Unpreemptively".
+	^ ((self nanoSeconds - start ) / 1000 ) asInteger
+]
+
+{ #category : #performance }
 GenExperimentTimer >> minFor: block [ 
 	"return minimal execution time (least noice) in microseconds for blockReps executions of block"
 	| minTime| 
-	minTime :=  (Time microsecondsToRun: [ blockReps timesRepeat: block ]).
+	minTime :=  (self microToRun: [ blockReps timesRepeat: block ]).
 	measureReps-1 timesRepeat: [ 
-		minTime := minTime min: (Time microsecondsToRun: [ blockReps timesRepeat: block ]) ].
+		minTime := minTime min: (self microToRun: [ blockReps timesRepeat: block ]) ].
 	^ minTime
 ]
 

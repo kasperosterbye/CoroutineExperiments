@@ -2,12 +2,12 @@
 I implement my generator using a process based coroutine
 "
 Class {
-	#name : #GenCoSuspendpGenerator,
+	#name : #GenCoSuspendGenerator,
 	#superclass : #GenCoGenerator,
 	#category : #'GeneratorExperiments-Generators'
 }
 
 { #category : #initialization }
-GenCoSuspendpGenerator >> coroutineClass [
+GenCoSuspendGenerator >> coroutineClass [
 	^ GenSuspendCoroutine 
 ]

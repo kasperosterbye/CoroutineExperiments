@@ -6,5 +6,5 @@ Class {
 
 { #category : #accessing }
 GenSuspendGeneratorTest >> generatorClass [
-	^ GenCoSuspendpGenerator
+	^ GenCoSuspendGenerator
 ]

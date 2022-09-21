@@ -11,7 +11,7 @@ Class {
 GenPerformanceTests >> generators [
 
 	^ { 
-		  GenCoSuspendpGenerator.
+		  GenCoSuspendGenerator.
 		  GenCoSwapGenerator.
 		  GenProcessSemaphoreGenerator.
 		  GenProcessSuspendGenerator.
@@ -23,9 +23,9 @@ GenPerformanceTests >> generators [
 GenPerformanceTests >> performMeasurementNumbers [
 	| generatorBody timer |
 	generatorBody := [ :gen | 
-		1 to: 10000 do: [ :i | gen yield: i ] ].
+		1 to: 1000 do: [ :i | gen yield: i ] ].
 	timer := GenExperimentTimer new
-		blockReps: 1;
+		blockReps: 5;
 		measureReps: 300.
 	^ ((self generators collect: [ :generator |
 		generator name -> (timer minFor: [ | gen |
@@ -41,7 +41,7 @@ GenPerformanceTests >> performMeasurementPrimes [
 		1000000 to: 1020000 do: [ :i | i isPrime ifTrue: [ gen yield: i ] ] ].
 	timer := GenExperimentTimer new
 		blockReps: 1;
-		measureReps: 300.
+		measureReps: 100.
 	^ ((self generators collect: [ :generator |
 		generator name -> (timer minFor: [ | gen |
 			gen := generator on: generatorBody.
@@ -53,11 +53,27 @@ GenPerformanceTests >> performMeasurementPrimes [
 GenPerformanceTests >> performMeasurementSorting [
 	| sorter task timer |
 	sorter := GeneratorSort new.
-	task := sorter testSize: 100.
+	task := sorter testSize: 1000.
 	timer := GenExperimentTimer new
-		blockReps: 5;
-		measureReps: 300.
+		blockReps: 1;
+		measureReps: 200.
 	^ ((self generators collect: [ :generator |
-		sorter generatorClass: generator.
-		generator name -> (timer minFor: [ sorter sort: task ])]) sort: [ :a :b | a value < b value ]) asOrderedDictionary 
+			sorter := GeneratorSort new generatorClass: generator.
+			generator name -> (timer minFor: [ sorter sort: task ])]) 
+		sort: [ :a :b | a value < b value ]) asOrderedDictionary 
+]
+
+{ #category : #reporting }
+GenPerformanceTests >> report [
+	"report a number of csv lines on the form: testname, subject, time"
+	 ^ ((self performMeasurementNumbers associations collect: [ :assoc |
+		'numbers;' , assoc key,';', assoc value asString
+		 ]),
+	(self performMeasurementPrimes  associations collect: [ :assoc |
+		'primes;' , assoc key,';', assoc value asString
+		 ]),
+	(self performMeasurementSorting associations collect: [ :assoc |
+		'sorting;' , assoc key,';', assoc value asString
+		 ])) joinUsing: String cr
+	
 ]
