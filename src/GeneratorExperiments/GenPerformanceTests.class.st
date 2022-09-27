@@ -7,6 +7,18 @@ Class {
 	#category : #'GeneratorExperiments-Performance'
 }
 
+{ #category : #'as yet unclassified' }
+GenPerformanceTests >> countSwapsPerformedNumbers: generator [
+	"This is used to count the number of swapSenders done by the implementations Generator and GenCoSwapGenerator.
+	It is somewhat hand held, in that one has to open Context>>#swapSender: and insert a counter (debug pane)
+	then compare the counts. Generator gives 3001, and GenCoSwapGenerator gives 2003"
+	| generatorBody gen |
+	generatorBody := [ :g | 1 to: 1000 do: [ :i | g yield: i ] ].
+
+	gen := generator on: generatorBody.
+	[ gen atEnd ] whileFalse: [ gen next ] 
+]
+
 { #category : #subjects }
 GenPerformanceTests >> generators [
 
