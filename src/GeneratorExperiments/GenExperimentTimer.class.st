@@ -79,6 +79,16 @@ GenExperimentTimer >> minFor: block [
 ]
 
 { #category : #performance }
+GenExperimentTimer >> nanoMin: block [ 
+	"return minimal execution time (least noice) in microseconds for blockReps executions of block"
+	| minTime| 
+	minTime :=  self nanoToRun: block.
+	measureReps-1 timesRepeat: [ 
+		minTime := minTime min: (self nanoToRun: block ) ].
+	^ minTime
+]
+
+{ #category : #performance }
 GenExperimentTimer >> nanoMinFor: block [ 
 	"return minimal execution time (least noice) in microseconds for blockReps executions of block"
 	| minTime| 
@@ -90,7 +100,7 @@ GenExperimentTimer >> nanoMinFor: block [
 
 { #category : #performance }
 GenExperimentTimer >> nanoSeconds [ 
-	"Stolen from malltalk highResClock"
+	"Stolen from smalltalk highResClock"
 	<primitive: 'primitiveHighResClock'>
 	^0
 ]

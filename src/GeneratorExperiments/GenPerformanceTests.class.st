@@ -32,6 +32,19 @@ GenPerformanceTests >> generators [
 ]
 
 { #category : #performance }
+GenPerformanceTests >> performMeasurementJustCreate [
+	| generatorBody timer |
+	generatorBody := [ :gen |  ].
+	timer := GenExperimentTimer new
+		blockReps: 500;
+		measureReps: 300.
+	^ ((self generators collect: [ :generator |
+		generator name -> (timer minFor: [ | gen |
+			gen := generator on: generatorBody.
+			])]) sort: [ :a :b | a value < b value ]) asOrderedDictionary 
+]
+
+{ #category : #performance }
 GenPerformanceTests >> performMeasurementNumbers [
 	| generatorBody timer |
 	generatorBody := [ :gen | 
