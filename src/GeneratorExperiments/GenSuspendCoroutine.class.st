@@ -46,16 +46,13 @@ GenSuspendCoroutine >> isTerminated [
 { #category : #'instance creation' }
 GenSuspendCoroutine >> on: block [
 	terminated := false.
-	coProcess := [	
-		self suspend: self.
-		[ [block value: self]
+	coProcess := [
+		[block value: self]
 				on: Error
-				do: [ :err | clientProcess signalException: err ]]
-		ensure: [
-				terminated := true.
-				clientProcess resume].
+				do: [ :err | clientProcess signalException: err ].
+		terminated := true.
+		clientProcess resume.
 	] newProcess.
-	^ self attach 
 ]
 
 { #category : #coroutine }
